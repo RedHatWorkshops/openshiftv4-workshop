@@ -1,0 +1,386 @@
+[[exploring-the-cluster]]
+= Exploring the Cluster
+
+== Exploring the Cluster
+
+In this lab exercise, we will review the OpenShift Web Console.
+Let's take some time to explore our  OCP4 cluster. You now have two options, you can use your local terminal on your laptop, or you can use the browser-based terminal that we provisioned in the previous section. Due to connectivity challenges, you may be forced to use the browser-based one, and for convenience our recommendation would be to use it. If you really want to configure your local client you can do so by using the following instructions to download the command line tooling. You should only do this if you don't want to use the browser-based terminal; make sure you run this on your local laptop and NOT within the web-browser.
+
+Currently using the OC client CLI from https://mirror.openshift.com/pub/openshift-v3/clients/. You can check if there is an updated one before running the download instruction. You can update the URL accordingly if you like.
+
+==== For Linux:
+
+
+```
+$ wget https://mirror.openshift.com/pub/openshift-v3/clients/4.1.0-201904090034.git.0.1016bda.el7/linux/oc.tar.gz
+(...)
+$ tar -zxvf oc.tar.gz
+oc
+
+$ export PATH=$PATH:$(pwd)
+$ oc version
+oc v4.0.0-0.148.0
+kubernetes v1.11.0+8868a98a7b
+features: Basic-Auth GSSAPI Kerberos SPNEGO
+```
+
+==== For MacOS:
+
+```
+$ wget https://mirror.openshift.com/pub/openshift-v3/clients/4.1.0-201904090034.git.0.1016bda.el7/macosx/oc.tar.gz
+(...)
+$ tar -zxvf oc.tar.gz
+x oc
+
+$ export PATH=$PATH:$(pwd)
+$ oc version
+oc v4.0.0-0.148.0
+kubernetes v1.11.0+8868a98a7b
+features: Basic-Auth GSSAPI Kerberos SPNEGO
+```
+
+Let's now configure our command line tooling to point to our new cluster.
+Below you'll need to enter the API URI, which will be shown as the "Openshift API for command line 'oc' client".
+OCP4 CLI login require the API URL ({{API_URL}}) not the master URL.
+
+```
+$ oc login --server {{API_URL}}
+
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted by others.
+Use insecure connections? (y/n): y
+
+Authentication required for {{API_URL}} (openshift)
+Username: <your username>
+Password: <your password>
+Login successful.
+(...)
+
+Using project "default".
+Welcome! See 'oc help' to get started.
+```
+
+You can now check that your config has been written successfully:
+
+```
+$ cat ~/.kube/config
+apiVersion: v1
+clusters:
+- cluster:
+    insecure-skip-tls-verify: true
+    server: {{API_URL}}
+(...)
+```
+
+NOTE: Your output will vary slightly from the above, you'll just need to make sure to use the API endpoint and credentials that you were provided with.
+Repeat the lab that creates an application from a docker image (lab 2) using OpenShift Web
+Console.
+
+Now that your client CLI is installed, you will have access to the web console and can use the CLI. Below are some command-line exercises to explore the cluster.
+
+=== Cluster Nodes
+
+The default installation behavior creates 6 nodes: 3 masters and 3 "worker" application/compute nodes. You can view them with:
+
+```
+$ oc get nodes -o wide
+NAME                           STATUS    ROLES     AGE       VERSION              INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                          KERNEL-VERSION              CONTAINER-RUNTIME
+ip-10-0-137-104.ec2.internal   Ready     worker    24h       v1.12.4+5dc94f3fda   10.0.137.104   <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
+ip-10-0-140-138.ec2.internal   Ready     master    24h       v1.12.4+5dc94f3fda   10.0.140.138   <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
+ip-10-0-158-222.ec2.internal   Ready     master    24h       v1.12.4+5dc94f3fda   10.0.158.222   <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
+ip-10-0-159-179.ec2.internal   Ready     worker    24h       v1.12.4+5dc94f3fda   10.0.159.179   <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
+ip-10-0-168-43.ec2.internal    Ready     master    24h       v1.12.4+5dc94f3fda   10.0.168.43    <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
+ip-10-0-171-135.ec2.internal   Ready     worker    24h       v1.12.4+5dc94f3fda   10.0.171.135   <none>
+```
+
+If you want to see the various applied labels, you can also do:
+
+```
+$ oc get nodes --show-labels
+NAME                           STATUS    ROLES     AGE       VERSION              LABELS
+ip-10-0-137-104.ec2.internal   Ready     worker    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.large,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1a,kubernetes.io/hostname=ip-10-0-137-104,node-role.kubernetes.io/worker=
+ip-10-0-140-138.ec2.internal   Ready     master    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.xlarge,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1a,kubernetes.io/hostname=ip-10-0-140-138,node-role.kubernetes.io/master=
+ip-10-0-158-222.ec2.internal   Ready     master    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.xlarge,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1b,kubernetes.io/hostname=ip-10-0-158-222,node-role.kubernetes.io/master=
+ip-10-0-159-179.ec2.internal   Ready     worker    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.large,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1b,kubernetes.io/hostname=ip-10-0-159-179,node-role.kubernetes.io/worker=
+ip-10-0-168-43.ec2.internal    Ready     master    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.xlarge,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1c,kubernetes.io/hostname=ip-10-0-168-43,node-role.kubernetes.io/master=
+ip-10-0-171-135.ec2.internal   Ready     worker    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.large,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1c,kubernetes.io/hostname=ip-10-0-171-135,node-role.kubernetes.io/worker=
+```
+
+For reference, labels are used as a mechanism to tag certain information onto a node, or a set of nodes, that can help you identify your systems, e.g. by operating system, system architecture, specification, location of the system (e.g. region), it's hostname, etc. They can also help with application scheduling, e.g. make sure that my application (or pod) resides on a specific system type. The labels shown above are utilising the default labels, but it's possible to set some custom labels in the form of a key-value pair.
+
+=== The Cluster Operator
+
+The cluster version operator is the core of what defines an OpenShift deployment . The cluster version operator pod(s) contains the set of manifests which are used to deploy, updated, and/or manage the OpenShift services in the cluster. This operator ensures that the other services, also deployed as operators, are at the version which matches the release definition and takes action to remedy discrepancies when necessary.
+
+```
+$ oc get deployments -n openshift-cluster-version
+NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+cluster-version-operator   1         1         1            1           2h
+```
+
+You can also view the current version of the OpenShift cluster and give you a high-level indication of the status:
+
+```
+$oc get clusterversion
+NAME      VERSION      AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.1.0-rc.3   True        False         23h     Cluster version is 4.1.0-rc.3
+```
+
+If you want to review a list of operators that the cluster version operator is controlling, along with their status, you can ask for a list of the cluster operators:
+
+```
+$ oc get clusteroperator
+NAME                                 VERSION      AVAILABLE   PROGRESSING   DEGRADED   SINCE
+authentication                       4.1.0-rc.3   True        False         False      23h
+cloud-credential                     4.1.0-rc.3   True        False         False      23h
+cluster-autoscaler                   4.1.0-rc.3   True        False         False      23h
+console                              4.1.0-rc.3   True        False         False      23h
+dns                                  4.1.0-rc.3   True        False         False      23h
+image-registry                       4.1.0-rc.3   True        False         False      23h
+ingress                              4.1.0-rc.3   True        False         False      23h
+kube-apiserver                       4.1.0-rc.3   True        False         False      23h
+kube-controller-manager              4.1.0-rc.3   True        False         False      23h
+kube-scheduler                       4.1.0-rc.3   True        False         False      23h
+machine-api                          4.1.0-rc.3   True        False         False      23h
+machine-config                       4.1.0-rc.3   True        False         False      23h
+marketplace                          4.1.0-rc.3   True        False         False      23h
+monitoring                           4.1.0-rc.3   True        False         False      23h
+network                              4.1.0-rc.3   True        False         False      23h
+node-tuning                          4.1.0-rc.3   True        False         False      23h
+openshift-apiserver                  4.1.0-rc.3   True        False         False      23h
+openshift-controller-manager         4.1.0-rc.3   True        False         False      23h
+openshift-samples                    4.1.0-rc.3   True        False         False      23h
+operator-lifecycle-manager           4.1.0-rc.3   True        False         False      23h
+operator-lifecycle-manager-catalog   4.1.0-rc.3   True        False         False      23h
+service-ca                           4.1.0-rc.3   True        False         False      23h
+service-catalog-apiserver            4.1.0-rc.3   True        False         False      23h
+service-catalog-controller-manager   4.1.0-rc.3   True        False         False      23h
+storage                              4.1.0-rc.3   True        False         False      23h
+```
+
+Or a more comprehensive way of getting a list of operators running on the cluster, along with the link to the code, the documentation, and the commit that provided the functionality is as follows
+
+```
+[~] $ oc adm release info --commits
+Name:      4.1.0-rc.3
+Digest:    sha256:713aae8687cf8a3cb5c2c504f65532dfe11e1b3534448ea9eeef5b0931d3e208
+Created:   2019-05-10 18:39:16 +0000 UTC
+OS/Arch:   linux/amd64
+Manifests: 287
+
+Release Metadata:
+  Version:  4.1.0-rc.3
+  Upgrades: <none>
+  Metadata:
+    description: beta 5
+  Metadata:
+    url: https://errata.devel.redhat.com/advisory/38252
+
+Component Versions:
+  Kubernetes 1.13.4
+
+Images:
+  NAME                                          REPO
+  aws-machine-controllers                       https://github.com/openshift/cluster-api-provider-aws
+  azure-machine-controllers                     https://github.com/openshift/cluster-api-provider-azure
+  baremetal-machine-controllers                 https://github.com/openshift/cluster-api-provider-baremetal
+  cli                                           https://github.com/openshift/ose
+  cli-artifacts                                 https://github.com/openshift/ose
+  cloud-credential-operator                     https://github.com/openshift/cloud-credential-operator
+  cluster-authentication-operator               https://github.com/openshift/cluster-authentication-operator
+  cluster-autoscaler                            https://github.com/openshift/kubernetes-autoscaler
+  cluster-autoscaler-operator                   https://github.com/openshift/cluster-autoscaler-operator
+  cluster-bootstrap                             https://github.com/openshift/cluster-bootstrap
+  cluster-config-operator                       https://github.com/openshift/cluster-config-operator
+  cluster-dns-operator                          https://github.com/openshift/cluster-dns-operator
+  cluster-image-registry-operator               https://github.com/openshift/cluster-image-registry-operator
+  cluster-ingress-operator                      https://github.com/openshift/cluster-ingress-operator
+  cluster-kube-apiserver-operator               https://github.com/openshift/cluster-kube-apiserver-operator
+  cluster-kube-controller-manager-operator      https://github.com/openshift/cluster-kube-controller-manager-operator
+  cluster-kube-scheduler-operator               https://github.com/openshift/cluster-kube-scheduler-operator
+  cluster-machine-approver                      https://github.com/openshift/cluster-machine-approver
+  cluster-monitoring-operator                   https://github.com/openshift/cluster-monitoring-operator
+  cluster-network-operator                      https://github.com/openshift/cluster-network-operator
+  cluster-node-tuned                            https://github.com/openshift/openshift-tuned
+  cluster-node-tuning-operator                  https://github.com/openshift/cluster-node-tuning-operator
+  cluster-openshift-apiserver-operator          https://github.com/openshift/cluster-openshift-apiserver-operator
+  cluster-openshift-controller-manager-operator https://github.com/openshift/cluster-openshift-controller-manager-operator
+  cluster-samples-operator                      https://github.com/openshift/cluster-samples-operator
+  cluster-storage-operator                      https://github.com/openshift/cluster-storage-operator
+  cluster-svcat-apiserver-operator              https://github.com/openshift/cluster-svcat-apiserver-operator
+  cluster-svcat-controller-manager-operator     https://github.com/openshift/cluster-svcat-controller-manager-operator
+  cluster-version-operator                      https://github.com/openshift/cluster-version-operator
+  configmap-reloader                            https://github.com/openshift/configmap-reload
+  console                                       https://github.com/openshift/console
+  console-operator                              https://github.com/openshift/console-operator
+  container-networking-plugins-supported        https://github.com/openshift/containernetworking-plugins
+  container-networking-plugins-unsupported      https://github.com/openshift/containernetworking-plugins
+  coredns                                       https://github.com/openshift/coredns
+  deployer                                      https://github.com/openshift/ose
+  docker-builder                                https://github.com/openshift/builder
+  docker-registry                               https://github.com/openshift/image-registry
+  etcd                                          https://github.com/openshift/etcd
+  grafana                                       https://github.com/openshift/grafana
+  haproxy-router                                https://github.com/openshift/router
+  hyperkube                                     https://github.com/openshift/ose
+  hypershift                                    https://github.com/openshift/ose
+  installer                                     https://github.com/openshift/installer
+  installer-artifacts                           https://github.com/openshift/installer
+  jenkins                                       https://github.com/openshift/jenkins
+  jenkins-agent-maven                           https://github.com/openshift/jenkins
+  jenkins-agent-nodejs                          https://github.com/openshift/jenkins
+  k8s-prometheus-adapter                        https://github.com/openshift/k8s-prometheus-adapter
+  kube-client-agent                             https://github.com/openshift/kubecsr
+  kube-etcd-signer-server                       https://github.com/openshift/kubecsr
+  kube-rbac-proxy                               https://github.com/openshift/kube-rbac-proxy
+  kube-state-metrics                            https://github.com/openshift/kube-state-metrics
+  libvirt-machine-controllers                   https://github.com/openshift/cluster-api-provider-libvirt
+  machine-api-operator                          https://github.com/openshift/machine-api-operator
+  machine-config-controller                     https://github.com/openshift/machine-config-operator
+  machine-config-daemon                         https://github.com/openshift/machine-config-operator
+  machine-config-operator                       https://github.com/openshift/machine-config-operator
+  machine-config-server                         https://github.com/openshift/machine-config-operator
+  machine-os-content
+  multus-cni                                    https://github.com/openshift/multus-cni
+  must-gather                                   https://github.com/openshift/must-gather
+  node                                          https://github.com/openshift/ose
+  oauth-proxy                                   https://github.com/openshift/oauth-proxy
+  openstack-machine-controllers                 https://github.com/openshift/cluster-api-provider-openstack
+  operator-lifecycle-manager                    https://github.com/operator-framework/operator-lifecycle-manager
+  operator-marketplace                          https://github.com/operator-framework/operator-marketplace
+  operator-registry                             https://github.com/operator-framework/operator-registry
+  ovn-kubernetes                                https://github.com/openshift/ose-ovn-kubernetes
+  pod                                           https://github.com/openshift/images
+  prom-label-proxy                              https://github.com/openshift/prom-label-proxy
+  prometheus                                    https://github.com/openshift/prometheus
+  prometheus-alertmanager                       https://github.com/openshift/prometheus-alertmanager
+  prometheus-config-reloader                    https://github.com/openshift/prometheus-operator
+  prometheus-node-exporter                      https://github.com/openshift/node_exporter
+  prometheus-operator                           https://github.com/openshift/prometheus-operator
+  service-ca-operator                           https://github.com/openshift/service-ca-operator
+  service-catalog                               https://github.com/openshift/service-catalog
+  setup-etcd-environment                        https://github.com/openshift/machine-config-operator
+  sriov-cni                                     https://github.com/openshift/sriov-cni
+  sriov-network-device-plugin                   https://github.com/openshift/sriov-network-device-plugin
+  telemeter                                     https://github.com/openshift/telemeter
+  tests                                         https://github.com/openshift/ose
+```
+
+You can also rsh (remote shell access) into the running Operator and see the various manifests associated with the installed release of OpenShift:
+
+```
+$ oc rsh -n openshift-cluster-version deployments/cluster-version-operator
+```
+
+Then to list the available manifests:
+
+
+```
+sh-4.2# ls -l /release-manifests/
+total 1876
+-r--r--r--. 1 root root   4431 May  9 16:20 0000_03_authorization-openshift_01_rolebindingrestriction.crd.yaml
+-r--r--r--. 1 root root   3375 May  9 16:20 0000_03_quota-openshift_01_clusterresourcequota.crd.yaml
+-r--r--r--. 1 root root  12039 May  9 16:20 0000_03_security-openshift_01_scc.crd.yaml
+-r--r--r--. 1 root root    146 May  9 16:20 0000_05_config-operator_02_apiserver.cr.yaml
+-r--r--r--. 1 root root    151 May  9 16:20 0000_05_config-operator_02_authentication.cr.yaml
+-r--r--r--. 1 root root    142 May  9 16:20 0000_05_config-operator_02_build.cr.yaml
+-r--r--r--. 1 root root    144 May  9 16:20 0000_05_config-operator_02_console.cr.yaml
+-r--r--r--. 1 root root    140 May  9 16:20 0000_05_config-operator_02_dns.cr.yaml
+-r--r--r--. 1 root root    148 May  9 16:20 0000_05_config-operator_02_featuregate.cr.yaml
+-r--r--r--. 1 root root    142 May  9 16:20 0000_05_config-operator_02_image.cr.yaml
+-r--r--r--. 1 root root    151 May  9 16:20 0000_05_config-operator_02_infrastructure.cr.yaml
+-r--r--r--. 1 root root    144 May  9 16:20 0000_05_config-operator_02_ingress.cr.yaml
+-r--r--r--. 1 root root    144 May  9 16:20 0000_05_config-operator_02_network.cr.yaml
+-r--r--r--. 1 root root    142 May  9 16:20 0000_05_config-operator_02_oauth.cr.yaml
+-r--r--r--. 1 root root    144 May  9 16:20 0000_05_config-operator_02_project.cr.yaml
+-r--r--r--. 1 root root    146 May  9 16:20 0000_05_config-operator_02_scheduler.cr.yaml
+-r--r--r--. 1 root root   5322 May  9 16:20 0000_10_config-operator_01_apiserver.crd.yaml
+-r--r--r--. 1 root root   5831 May  9 16:20 0000_10_config-operator_01_authentication.crd.yaml
+-r--r--r--. 1 root root   6941 May  9 16:20 0000_10_config-operator_01_build.crd.yaml
+-r--r--r--. 1 root root   2741 May  9 16:20 0000_10_config-operator_01_console.crd.yaml
+-r--r--r--. 1 root root   4699 May  9 16:20 0000_10_config-operator_01_dns.crd.yaml
+-r--r--r--. 1 root root   1885 May  9 16:20 0000_10_config-operator_01_featuregate.crd.yaml
+-r--r--r--. 1 root root   6378 May  9 16:20 0000_10_config-operator_01_image.crd.yaml
+-r--r--r--. 1 root root   4101 May  9 16:20 0000_10_config-operator_01_infrastructure.crd.yaml
+-r--r--r--. 1 root root   1808 May  9 16:20 0000_10_config-operator_01_ingress.crd.yaml
+-r--r--r--. 1 root root   3654 May  9 16:20 0000_10_config-operator_01_network.crd.yaml
+-r--r--r--. 1 root root  34981 May  9 16:20 0000_10_config-operator_01_oauth.crd.yaml
+-r--r--r--. 1 root root    166 May  9 16:20 0000_10_config-operator_01_openshift-config-managed-ns.yaml
+-r--r--r--. 1 root root    158 May  9 16:20 0000_10_config-operator_01_openshift-config-ns.yaml
+-r--r--r--. 1 root root   2327 May  9 16:20 0000_10_config-operator_01_project.crd.yaml
+-r--r--r--. 1 root root   3450 May  9 16:20 0000_10_config-operator_01_scheduler.crd.yaml
+-r--r--r--. 1 root root    538 May  9 16:20 0000_10_config-operator_02_config.clusterrole.yaml
+-r--r--r--. 1 root root   3375 May  9 16:20 0000_10_quota-openshift_01_clusterresourcequota.crd.yaml
+-r--r--r--. 1 root root    219 May  9 19:15 0000_20_kube-apiserver-operator_00_namespace.yaml
+(...)
+```
+You will see a number of .yaml files in this directory; these are manifests that describe each of the operators and how they're applied. Feel free to take a look at some of these to give you an idea of what it's doing.
+
+```
+sh-4.2# cat /release-manifests/0000_50_console-operator_00-crd-operator-config.yaml
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: consoles.operator.openshift.io
+spec:
+  scope: Cluster
+  group: operator.openshift.io
+  names:
+    kind: Console
+    listKind: ConsoleList
+    plural: consoles
+    singular: console
+  subresources:
+    status: {}
+  versions:
+    - name: v1
+      served: true
+      storage: true
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            managementState:
+              pattern: ^(Managed|Unmanaged|Removed|Forced)$
+              type: string
+              description: ManagementState indicates whether and how the operator
+                should manage the component
+            customization:
+              properties:
+                documentationBaseURL:
+                  pattern: ^$|^((https):\/\/?)[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|\/?))\/$
+                  type: string
+                  description: Documentation base url can optionally be set but must end in a trailing slash
+                brand:
+                  pattern: ^$|^(ocp|origin|okd|dedicated|online|azure)$
+                  type: string
+                  description: Brand may be optionally set to one of six values - azure|dedicated|ocp|okd|online|origin
+
+sh4.2# exit
+exit
+```
+
+NOTE: Don't forget to exit from your rsh session before continuing...
+
+If you want to look at what the Cluster Operator has done since it was launched, you can execute the following:
+
+```
+$ oc logs deployments/cluster-version-operator -n openshift-cluster-version > operatorlog.txt
+$ tail operatorlog.txt
+I0514 20:48:05.887605       1 cvo.go:338] Finished syncing cluster version "openshift-cluster-version/version" (165.875µs)
+I0514 20:48:20.887420       1 cvo.go:336] Started syncing cluster version "openshift-cluster-version/version" (2019-05-14 20:48:20.88740786 +0000 UTC m=+87191.276686302)
+I0514 20:48:20.887478       1 cvo.go:364] Desired version from operator is v1.Update{Version:"4.1.0-rc.3", Image:"quay.io/openshift-release-dev/ocp-release@sha256:713aae8687cf8a3cb5c2c504f655
+32dfe11e1b3534448ea9eeef5b0931d3e208", Force:false}
+I0514 20:48:20.887574       1 cvo.go:338] Finished syncing cluster version "openshift-cluster-version/version" (162.252µs)
+I0514 20:48:35.887466       1 cvo.go:336] Started syncing cluster version "openshift-cluster-version/version" (2019-05-14 20:48:35.887452731 +0000 UTC m=+87206.276731165)
+I0514 20:48:35.887651       1 cvo.go:364] Desired version from operator is v1.Update{Version:"4.1.0-rc.3", Image:"quay.io/openshift-release-dev/ocp-release@sha256:713aae8687cf8a3cb5c2c504f655
+32dfe11e1b3534448ea9eeef5b0931d3e208", Force:false}
+I0514 20:48:35.887738       1 cvo.go:338] Finished syncing cluster version "openshift-cluster-version/version" (280.777µs)
+I0514 20:48:50.887443       1 cvo.go:336] Started syncing cluster version "openshift-cluster-version/version" (2019-05-14 20:48:50.887431061 +0000 UTC m=+87221.276709496)
+I0514 20:48:50.887516       1 cvo.go:364] Desired version from operator is v1.Update{Version:"4.1.0-rc.3", Image:"quay.io/openshift-release-dev/ocp-release@sha256:713aae8687cf8a3cb5c2c504f655
+32dfe11e1b3534448ea9eeef5b0931d3e208", Force:false}
+I0514 20:48:50.887675       1 cvo.go:338] Finished syncing cluster version "openshift-cluster-version/version" (239.797µs)
+```
+
+The operator's log is extremely long, so it is recommended that you redirect it to a file instead of trying to look at it directly with the logs command.

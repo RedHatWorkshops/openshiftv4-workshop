@@ -1,0 +1,113 @@
+[[using-operatorhub]]
+= OpenShift 4 as a Developer
+
+== OpenShift 4 as a Developer
+
+In this lab, we're aiming to get you familiar with Red Hat OpenShift Container Platform 4.0 from a developer perspective, using container-native developer tooling to develop and deploy a sample app with Red Hat Middleware. It's comprised of a number of individual steps inside of this section that will run you through some of the more common tasks:
+
+ * Deploying application services to developer projects with OpenShift Operators and the Operator Hub.
+ * Creating development environments with CodeReady Workspaces
+ * Building and deploying a sample app with odo and Red Hat Middleware
+ * A preview of a new middleware framework named Quarkus, with features like a unified Reactive and Imperative programming model, native image compilation, blazingly fast startup times, and Live Reloading of Java code.
+
+We feel that giving you a hands-on overview of developing apps on OpenShift will be a lot more beneficial than just delivering slideware. We want to make sure that you know how the components fit together, and how to use it. We will use a combination of command-line tools (oc, odo) and interaction via the OpenShift Web Console and CodeReady Workspaces.
+
+
+=== Install Operators
+
+In this lab we will use CodeReady to create and work with a sample app based on Red Hat Data Grid. To get access to CodeReady and Data Grid services, you need to point to a special repo containing operator catalog entries. Install this catalog using the following oc command, noting that you'll have to copy from cat to EOF, and paste it in. This will create a custom OperatorSource object that will bring in the Operator catalog items needed for this workshop and make it available via OperatorHub:
+
+```
+cat <<EOF | oc create -f -
+apiVersion: operators.coreos.com/v1
+kind: OperatorSource
+metadata:
+  name: devday-operators
+  namespace: openshift-marketplace
+spec:
+  type: appregistry
+  endpoint: https://quay.io/cnr
+  registryNamespace: jamesfalkner
+  displayName: "OCP 4 Dev Day"
+  publisher: "Red Hat"
+EOF
+```
+
+If it was successful you should see the following:
+
+```
+operatorsource.operators.coreos.com/devday-operators created
+```
+
+=== Create Project
+
+Let's first create a developer project. Use the OpenShift Web Console, navigate to Home > Projects, and click Create Project to create a new project named **devday-Username**.
+IMPORTANT: Please replace *Username* with your username
+
+Alternatively, if you're more comfortable with the CLI, you can do it with oc new-project devday-**Username**
+
+
+image::ocp4-newproject.png[image]
+
+=== Install Red Hat Data Grid
+
+In our new project we will first deploy Red Hat Data Grid, a high performance, distributed data grid which our sample application will use for its reactive capabilities. Navigate to Catalog > Operator Hub in the OpenShift Console.
+
+Search for grid or browse to find Red Hat Data Grid, and click on it, and then click Install:
+
+image::datagrid-operator.png[image]
+
+We will install this Operator into our new namespace, so be sure to choose "A specific Namespace on the cluster" and choose your new project devday-**Username**, and click Subscribe to install the operator into the namespace (leave everything else on the default settings):
+
+image::datagrid-sub.png[image]
+
+Note that this is not the same as installing Data Grid itself - that's the next step!
+
+Navigate to Catalog > Installed Operators, and click on the Red Hat Data Grid operator (if you do not see it yet, it may take a few minutes to appear):
+
+image::datagrid-installed.png[image]
+
+This operator exposes one API, namely Red Hat Data Grid itself, so click on the "Red Hat Data Grid" name on the left, and select "Create New". Don't change anything in the YAML file defaults, and click Create. This will cause Red Hat Data Grid to be deployed to your project's namespace and can now be used by projects. If you navigate to Workloads > Pods you'll be able to see the Data Grid pods spinning up:
+
+image::datagrid-installed.png[image]
+
+=== Install CodeReady
+
+CodeReady is Red Hat's browser-based intelligent developer IDE. We'll use the CodeReady operator to deploy CodeReady so that we can use it in our project to develop our apps.
+
+Once again, navigate to Catalog > Operator Hub.
+
+Search for codeready or browse the catalog to find the CodeReady Operator, and click on it, and then click Install:
+
+image::codeready-operator.png[image]
+
+We will install this Operator into our new namespace, just like Data Grid, so be sure to choose "A specific Namespace on the cluster" and choose devday-**Username**, and click Subscribe to install the operator into the namespace (leave everything else on the default settings):
+
+image::codeready-install.png[image]
+
+For this workshop, we'll give the Operator administrator privileges so that it can create the needed resources. Run this command before proceeding:
+
+```
+$ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:devday-user1:codeready-operator -n devday-user1
+clusterrole.rbac.authorization.k8s.io/cluster-admin added: "system:serviceaccount:devday-user1:codeready-operator"
+```
+
+With the Operator installed, navigate to Catalog > Installed Operators, and click on the CodeReady operator on the left-hand side. This operator exposes one API, namely CodeReady itself, so click Create New on the CodeReady tile. Don't change anything in the YAML file defaults, and click Create. This will cause CodeReady to be deployed to the codeready namespace, and usable from your project's namespace.
+
+This will take several minutes to complete, and will install CodeReady into the devday-**Username** namespace. Once you see all 3 pods in the Running state using this command, then you can proceed:
+
+```
+$ oc get pods -n devday-user1
+NAME                                  READY   STATUS      RESTARTS   AGE
+codeready-operator-64b485c5f7-4t28t   1/1     Running     0          4m4s
+datagrid-1-deploy                     0/1     Completed   0          17m
+datagrid-1-g72jm                      1/1     Running     0          17m
+datagrid-operator-7f6c5c5cd4-hsnk7    1/1     Running     0          20m
+```
+
+Be sure to wait for all of these to be ready and Running before continuing, noting that the operator should show 'Completed' when it's done its job of deployment for us, so don;t worry about that one...
+
+
+
+
+Congratulations!! You now know how to install operators and deploy application via OperatorHub. From more information about operator, see https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html for more details.
