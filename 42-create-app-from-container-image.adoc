@@ -27,7 +27,7 @@ image::create-project.png[image]
   noting that there's no `http://`, enter exactly as shown here,
   without the quotes, and then select the magnifying glass to the right of the box,
   this will show you more information about the image.
-- Click on search icon:image::search.png[image]
+- Click on search icon image::search.png[image]
 
 - Enter a Name for the deployment
 - Scroll down a bit and provide an environment variable.
@@ -68,18 +68,20 @@ image::ocp4-route-details.png[image]
 - In the top right hand side of the route details page, you will see the `Location` which will be the routable URL that will provide access to our workshop terminal.
 - Click on this and you should now see the in-browser terminal session that we can use (if preferred, or mandated due to connectivity issues):
 
-image::ocp4-web-terminal.png[image]
+image::run-oc-terminal.png[image]
 
 - Execute the following in the terminal:
 
 ```
 $ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.5/openshift-client-linux-4.1.0-rc.5.tar.gz
-$ tar zvxf oc.tar.gz
+$ tar zvxf openshift-client-linux-4.1.0-rc.5.tar.gz
 $ mv oc /opt/app-root/bin/
 $ oc version
 ```
+
 NOTE: If normal cut/paste does not work, you can try to use browser's edit menu for cut/paste.
 
+image::ocp4-web-terminal.png[image]
 
 Congratulations!! You now know how to create a project, an application
 using an external docker image and navigate around. You can use this terminal
