@@ -8,7 +8,7 @@ With OpenShift 4.0+, we now have the ability to dynamically scale the cluster si
 In this lab you will learn how to scale OpenShift 4 cluster both manually and automatically.
 Applying autoscaling to an OpenShift Container Platform cluster involves deploying a ClusterAutoscaler and then deploying MachineAutoscalers for each Machine type in your cluster.
 
-=== Manual Cluster Scale Up
+=== Manual Cluster Scale Up/Down (Option 1)
 
 In this exercise we're going to manually add worker nodes to our cluster:
 
@@ -65,7 +65,7 @@ ip-10-0-170-241.us-east-2.compute.internal   Ready    worker         24h     v1.
 
 You'll note that some of these systems 'age' will be much newer than some of the others, these are the ones that will have just been added in. Before continuing, scale back down by editing the count to whatever it was previously for the Machine Set, i.e. return it to '1' node.
 
-==== Modifying via the CLI
+==== Manual Cluster Scale Up/Down via the CLI (Option 2)
 
 You can alter the Machine Set count in several ways in the web UI console, but you can also perform the same operation via the CLI by using the oc edit command on the machineset in the openshift-machine-api project.
 
@@ -215,6 +215,7 @@ $ sed -i s/\<clusterid\>/$CLUSTER_NAME/g machine-autoscale-example.yaml
 Here is the working sample of an MachineAutoScaler:
 
 ```
+[~] $ cat machine-autoscale-example.yaml
 kind: List
 metadata: {}
 apiVersion: v1
@@ -280,8 +281,7 @@ https://raw.githubusercontent.com/openshift/training/master/assets/cluster-autos
 This definition is set for a maximum of 20 workers, but we need to reduce that with our labs to minimize the cost. Let's first download that file:
 
 ```
-[~] $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/cluster-auto
-scaler.yaml
+[~] $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/cluster-autoscaler.yaml
 ```
 
 Now modify the max number of replicas:
@@ -293,6 +293,7 @@ $ sed -i s/20/10/g cluster-autoscaler.yaml
 Here is an example of ClusterAutoscaler yaml.
 
 ```
+[~] $ cat machine-autoscale-example.yaml
 apiVersion: "autoscaling.openshift.io/v1"
 kind: "ClusterAutoscaler"
 metadata:

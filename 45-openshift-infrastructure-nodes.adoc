@@ -6,19 +6,24 @@
 In this section we're going to look at the OpenShift infrastructure nodes, and more specifically how to scale them once they've been deployed. To understand what we mean by "infrastructure node", the nodes running the following services would fall into that description, although this is not necessarily an exhaustive list:
 
 Kubernetes and OpenShift control plane services ("masters")
-Router(s)
-Container Image Registry
-Cluster metrics collection ("monitoring")
-Cluster aggregated logging
-Service Brokers
+
+- Router(s)
+- Container Image Registry
+- Cluster metrics collection ("monitoring")
+- Cluster aggregated logging
+- Service Brokers
 
 NOTE: The OpenShift subscription model allows customers to run various core infrastructure components at no additional charge. In other words, a node that is only running core OpenShift infrastructure components is not counted in terms of the total number of subscriptions required to cover the environment. Any node running a container, pod, or component not described above is considered a worker and must be covered by a subscription.
 
-If we wanted to see what different types of nodes we have in our cluster we need to do a bit of digging. We can list all of the machines as part of our cluster in a couple of different ways, firstly with the simple oc get nodes which queries Kubernetes specifically for the nodes that are reporting in:
+If we wanted to see what different types of nodes, we have in our cluster we need to do a bit of digging.
+We can list all of the machines as part of our cluster in a couple of different ways,
+
+- with the simple oc get nodes which queries Kubernetes specifically for the nodes that are reporting in:
 
 ```
 $ oc project default
-Now using project "default" on server "https://api.cluster-3e5f.sandbox580.opentlc.com:6443".
+Now using project "default" on server {{API_URL}}.
+
 $ oc get nodes --show-labels
 NAME                                         STATUS   ROLES          AGE   VERSION             LABELS
 ip-10-0-128-248.us-east-2.compute.internal   Ready    worker         91m   v1.13.4+c3617b99f   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.large,beta.kubernetes.io/os=
@@ -41,7 +46,8 @@ linux,failure-domain.beta.kubernetes.io/region=us-east-2,failure-domain.beta.kub
 ift.io/os_id=rhcos,node.openshift.io/os_version=4.1
 ```
 
-And also asking via the Machine extension which uses a Kubernetes operator to manage the nodes themselves through the cluster itself; this can give us a little more information about the nodes and the underlying infrastructure, noting that this environment is running on-top of AWS:
+- the Machine extension which uses a Kubernetes operator to manage the nodes themselves through the cluster itself;
+this can give us a little more information about the nodes and the underlying infrastructure, noting that this environment is running on-top of AWS:
 
 ```
 $ oc get machines --all-namespaces --show-labels
@@ -63,11 +69,12 @@ ter-3e5f-kqr2b,machine.openshift.io/cluster-api-machine-role=worker,machine.open
 r-us-east-2c
 ```
 
-In both of these outputs you'll note that both of the outputs have roles listed, and these are associated to kubernetes labels for scheduling purposes; we have two types of role defined, master, and worker. With the exception of master nodes (due to specific scheduling and deployment limitations), all other node types are deployed as part of a MachineSet, and can therefore be scaled as one.
+In both of these outputs you'll note that both of the outputs have roles listed, and these are associated to kubernetes labels for scheduling purposes; we have two types of role defined: master and worker.
+With the exception of master nodes (due to specific scheduling and deployment limitations), all other node types are deployed as part of a MachineSet, and can therefore be scaled as one.
 
 === More MachineSet Details
 
-In the previous section you explored the MachineSets resource and scaled the cluster by changing its replica count, adding additional workers, we also configured an auto scaler to ensure that the cluster would have the required capacity to accommodate the workload demand. You'll note that right now we only have worker type machine sets configured:
+In the previous section, you explored the MachineSets resource and scaled the cluster by changing its replica count, adding additional workers, we also configured an auto scaler to ensure that the cluster would have the required capacity to accommodate the workload demand. You'll note that right now we only have worker type machine sets configured:
 
 ```
 $ oc get machinesets -n openshift-machine-api
@@ -76,22 +83,32 @@ cluster-3e5f-kqr2b-worker-us-east-2a   1         1         1       1           2
 cluster-3e5f-kqr2b-worker-us-east-2b   1         1         1       1           26h
 cluster-3e5f-kqr2b-worker-us-east-2c   1         1         1       1           26h
 ```
-Here we have three distinct machine sets deployed, each with a single machine running. Each machine set is aligned with a given AWS EC2 availability zone, and we could easily deploy additional machines (or nodes) into one of the three listed (1a, 1b and 1c). If we wanted to add additional capacity to our cluster we could adjust the replica count like we did in the previous lab, remembering that we randomly selected one of the machine sets in the overall configuration, but that's just for worker nodes, i.e. where our user applications run, and where some of the key infrastructure components run by default, e.g. our routers, etc.
 
-If we wanted to create a dedicated infrastructure role where we could run specific infrastructure services, components, and pods on (and move them away from the worker nodes like they are by default), we would need to create an additional set of nodes, define a MachineSet to deploy and scale them into, and then label them with specific kubernetes labels. We can then configure the various components to run specifically on nodes with those labels.
+- Here we have three distinct machine sets deployed, each with a single machine running. Each machine set is aligned with a given AWS EC2 availability zone, and we could easily deploy additional machines (or nodes) into one of the three listed (2a, 2b and 2c). If we wanted to add additional capacity to our cluster we could adjust the replica count like we did in the previous lab, remembering that we randomly selected one of the machine sets in the overall configuration, but that's just for worker nodes, i.e. where our user applications run, and where some of the key infrastructure components run by default, e.g. our routers, etc.
 
-To accomplish this, you will create additional MachineSets. The easiest way to do this is to get the existing MachineSets by downloading it into a file, and then modifying them. This is because the MachineSet has some details that are specific to the AWS region that the cluster is deployed in, like the AWS EC2 AMI ID, so crafting it by hand would be very difficult.
+- If we wanted to create a dedicated infrastructure role where we could run specific infrastructure services, components, and pods on (and move them away from the worker nodes like they are by default). We would need to:
+  1. Create an additional set of nodes
+  2. Define a MachineSet to deploy and scale them into
+  3. Label them with specific kubernetes labels.
+  4. Configure the various components to run specifically on nodes with those labels.
 
-Let's take a look at one of our MachineSets in detail to understand how the configuration is set, and how we can look to adapt it to create a new one for specifically for our infrastructure services. Use the following command, noting that you'll have to adjust the command to suit the name of your machine set:
+- To accomplish this, you will create additional MachineSets. The easiest way to do this is:
+  1. Get the existing MachineSets by downloading it into a file
+  2. Modifying them. This is because the MachineSet has some details that are specific to the AWS region that the cluster is deployed in, like the AWS EC2 AMI ID, so crafting it by hand would be very difficult.
+
+- Here is what we are going to do:
+  1. Take a look at one of our MachineSets in detail to understand how the configuration is set
+  2. Look to adapt it to create a new one for specifically for our infrastructure services.
+  3. Use the following command, noting that you'll have to adjust the command to suit the name of your machine set:
 
 ```
-oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api -o yaml
+[~] $oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api -o yaml
 ```
 
-Which will give you the following output:
+- Which will give you the following output:
 
 ```
-$ oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api -o yaml
+[~] $ oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api -o yaml
 apiVersion: machine.openshift.io/v1beta1
 kind: MachineSet
 metadata:
@@ -284,7 +301,7 @@ By looking at this MachineSet, we can tell that it houses infrastructure-focused
 ==== Match It
 Change any instance of sigs.k8s.io/cluster-api-machineset to match your new name of infrastructure-ap-east-2a (or whatever you're using). This appears in both .spec.selector.matchLabels as well as .spec.template.metadata.labels.
 
-**Add Your Node Label**
+===== Add Your Node Label
 Add a labels section to .spec.template.spec.metadata with the label node-role.kubernetes.io/infra: "". Why this particular label? Because oc get node looks at the node-role.kubernetes.io/xxx label and shows that in the output. This will make it easy to identify which workers are also infrastructure nodes (the quotes are because of the boolean).
 
 Your resulting section should look somewhat like the following, albeit with slightly different names as per your unique cluster name:
@@ -513,7 +530,7 @@ ip-10-0-170-241.us-east-2.compute.internal   Ready    worker   32h   v1.13.4+c36
 
 now that we have created dedicated infrastructure nodes, we want to tell the operator to put the router instances on nodes with the new role of infra.
 
-The OpenShift router operator creates a custom resource definition (CRD) called clusteringress. The clusteringress objects are observed by the router operator and tell the operator how to create and configure routers. Let's take a look:
+The OpenShift router operator creates a custom resource definition (CRD) called ingresscontroller. The ingresscontroller objects are observed by the router operator and tell the operator how to create and configure routers. Let's take a look:
 
 ```
 $ oc get ingresscontroller default -n openshift-ingress-operator -o yaml
@@ -608,8 +625,7 @@ Success! Our pods have been automatically redeployed onto the infrastructure nod
 The registry uses a similar CRD (Custom Resource Definition) mechanism to configure how the operator deploys the actual registry pods. That CRD is configs.imageregistry.operator.openshift.io. You will need to edit the cluster CR object in order to add the nodeSelector. First, take a look at it:
 
 ```
-$ oc get configs.imageregistry.operator.openshift.io/cluster -o yaml
-$ oc get configs.imageregistry.operator.openshift.io/cluster -o yaml
+[~] $ oc get configs.imageregistry.operator.openshift.io/cluster -o yaml
 apiVersion: imageregistry.operator.openshift.io/v1
 kind: Config
 metadata:
@@ -647,7 +663,7 @@ spec:
 Next, let's modify the custom resource by live-patching the configuration. For this we can use oc edit, and you'll need to modify the .spec section:
 
 ```
-$ oc edit configs.imageregistry.operator.openshift.io/cluster
+[~] $ oc edit configs.imageregistry.operator.openshift.io/cluster
 ```
 
 The .spec section will need to look like the following:
@@ -668,7 +684,7 @@ NOTE: The nodeSelector stanza may be added anywhere inside the .spec block.
 When you save and exit you should see the registry pod being moved to the infra node. The registry is in the openshift-image-registry project. If you execute the following quickly enough, you may see the old registry pods terminating and the new ones starting.:
 
 ```
-$ oc get pod -n openshift-image-registry
+[~] $ oc get pod -n openshift-image-registry
 NAME                                               READY   STATUS        RESTARTS   AGE
 cluster-image-registry-operator-5644775d7c-w78kh   1/1     Running       0          34h
 image-registry-5878c9d896-nmkc6                    1/1     Terminating   0          22h
@@ -691,7 +707,7 @@ Also note that the default replica count is 1. In a real-world environment you m
 If you look at the node on which the registry landed (noting that you'll likely have to refresh your list of pods by using the previous commands to get its new name):
 
 ```
-$ oc get pod image-registry-5878c9d896-nmkc6 -n openshift-image-registry -o wide
+[~] $ oc get pod image-registry-5878c9d896-nmkc6 -n openshift-image-registry -o wide
 NAME                              READY   STATUS    RESTARTS   AGE   IP           NODE                                         NOMINATED NODE   READINESS GATES
 image-registry-5878c9d896-nmkc6   1/1     Running   0          22h   10.131.4.5   ip-10-0-139-255.us-east-2.compute.internal   <none>           <none>
 ```
@@ -699,7 +715,7 @@ image-registry-5878c9d896-nmkc6   1/1     Running   0          22h   10.131.4.5 
 ...you'll note that it is now running on an infra worker:
 
 ```
-$ oc get node ip-10-0-139-255.us-east-2.compute.internal
+[~] $ oc get node ip-10-0-139-255.us-east-2.compute.internal
 NAME                                         STATUS   ROLES          AGE   VERSION
 ip-10-0-139-255.us-east-2.compute.internal   Ready    infra,worker   22h   v1.13.4+c3617b99f
 ```
@@ -713,7 +729,7 @@ The Cluster Monitoring operator is responsible for deploying and managing the st
 There is no ConfigMap created as part of the installation. Without one, the operator will assume default settings, as we can see, this is not defined:
 
 ```
-$ oc get configmap cluster-monitoring-config -n openshift-monitoring
+[~] $ oc get configmap cluster-monitoring-config -n openshift-monitoring
 NAME                        DATA   AGE
 cluster-monitoring-config   1      22h
 ```
@@ -721,7 +737,7 @@ cluster-monitoring-config   1      22h
 Even with the default settings, The operator will create several ConfigMap objects for the various monitoring stack components, and you can see them, too:
 
 ```
-$ oc get configmap -n openshift-monitoring
+[~] $ oc get configmap -n openshift-monitoring
 NAME                                                  DATA   AGE
 adapter-config                                        1      34h
 cluster-monitoring-config                             1      22h
@@ -749,14 +765,14 @@ https://github.com/openshift/training/blob/master/assets/cluster-monitoring-conf
 Let's use this as our new configuration; you can create the new monitoring config with the following command:
 
 ```
-oc create -f https://raw.githubusercontent.com/openshift/training/master/assets/cluster-monitoring-configmap.yaml
+[~] $ oc create -f https://raw.githubusercontent.com/openshift/training/master/assets/cluster-monitoring-configmap.yaml
 configmap/cluster-monitoring-config created
 ```
 
 We can now watch the various monitoring pods be redeployed onto our infrastructure nodes with the following command:
 
 ```
-$ oc get pod -w -n openshift-monitoring
+[~] $ oc get pod -w -n openshift-monitoring
 NAME                                           READY     STATUS              RESTARTS   AGE
 alertmanager-main-0                            3/3       Running             0          16h
 alertmanager-main-1                            3/3       Running             0          16h
