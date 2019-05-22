@@ -12,31 +12,30 @@ Currently using the OC client CLI from https://mirror.openshift.com/pub/openshif
 
 
 ```
-$ wget https://mirror.openshift.com/pub/openshift-v3/clients/4.1.0-201904090034.git.0.1016bda.el7/linux/oc.tar.gz
+[~] $ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux-4.1.0-rc.5.tar.gz
 (...)
-$ tar -zxvf oc.tar.gz
+[~] $ tar -zxvf openshift-client-linux-4.1.0-rc.5.tar.gz
 oc
 
-$ export PATH=$PATH:$(pwd)
-$ oc version
-oc v4.0.0-0.148.0
-kubernetes v1.11.0+8868a98a7b
-features: Basic-Auth GSSAPI Kerberos SPNEGO
+[~] $ export PATH=$PATH:$(pwd)
+[~] $ oc version
+Client Version: version.Info{Major:"4", Minor:"1+", GitVersion:"v4.1.0-201905171742+ddefebb-dirty", GitCommit:"ddefebb", GitTreeState:
+"dirty", BuildDate:"2019-05-18T00:33:46Z", GoVersion:"go1.11.5", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"13+", GitVersion:"v1.13.4+f2cc675", GitCommit:"f2cc675", GitTreeState:"clean", BuildDat
+e:"2019-05-18T00:35:43Z", GoVersion:"go1.11.5", Compiler:"gc", Platform:"linux/amd64"}
 ```
 
 ==== For MacOS:
 
 ```
-$ wget https://mirror.openshift.com/pub/openshift-v3/clients/4.1.0-201904090034.git.0.1016bda.el7/macosx/oc.tar.gz
+[~] $ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac-4.1.0-rc.5.tar.gz
 (...)
-$ tar -zxvf oc.tar.gz
+[~] $ tar zxvf openshift-client-mac-4.1.0-rc.5.tar.gz
 x oc
 
-$ export PATH=$PATH:$(pwd)
-$ oc version
-oc v4.0.0-0.148.0
-kubernetes v1.11.0+8868a98a7b
-features: Basic-Auth GSSAPI Kerberos SPNEGO
+[~] $ export PATH=$PATH:$(pwd)
+[~] $ oc version
+Client Version: version.Info{Major:"4", Minor:"1+", GitVersion:"v4.1.0-201905171742+b941ca8-dirty", GitCommit:"b941ca8", GitTreeState:"dirty", BuildDate:"2019-05-18T01:11:26Z", GoVersion:"go1.11.5", Compiler:"gc", Platform:"darwin/amd64"}
 ```
 
 Let's now configure our command line tooling to point to our new cluster.
@@ -44,7 +43,7 @@ Below you'll need to enter the API URI, which will be shown as the "Openshift AP
 OCP4 CLI login require the API URL ({{API_URL}}) not the master URL.
 
 ```
-$ oc login --server {{API_URL}}
+[~] $ oc login --server {{API_URL}}
 
 The server uses a certificate signed by an unknown authority.
 You can bypass the certificate check, but any data you send to the server could be intercepted by others.
@@ -63,17 +62,17 @@ Welcome! See 'oc help' to get started.
 You can now check that your config has been written successfully:
 
 ```
-$ cat ~/.kube/config
+[~] $ cat ~/.kube/config
 apiVersion: v1
 clusters:
 - cluster:
     insecure-skip-tls-verify: true
     server: {{API_URL}}
-(...)
+...
 ```
 
 NOTE: Your output will vary slightly from the above, you'll just need to make sure to use the API endpoint and credentials that you were provided with.
-Repeat the lab that creates an application from a docker image (lab 2) using OpenShift Web
+Repeat the lab that creates an application from a container image (lab 2) using OpenShift Web
 Console.
 
 Now that your client CLI is installed, you will have access to the web console and can use the CLI. Below are some command-line exercises to explore the cluster.
@@ -83,7 +82,7 @@ Now that your client CLI is installed, you will have access to the web console a
 The default installation behavior creates 6 nodes: 3 masters and 3 "worker" application/compute nodes. You can view them with:
 
 ```
-$ oc get nodes -o wide
+[~] $ oc get nodes -o wide
 NAME                           STATUS    ROLES     AGE       VERSION              INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                          KERNEL-VERSION              CONTAINER-RUNTIME
 ip-10-0-137-104.ec2.internal   Ready     worker    24h       v1.12.4+5dc94f3fda   10.0.137.104   <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
 ip-10-0-140-138.ec2.internal   Ready     master    24h       v1.12.4+5dc94f3fda   10.0.140.138   <none>        Red Hat CoreOS 400.7.20190301.0   3.10.0-957.5.1.el7.x86_64   cri-o://1.12.6-1.rhaos4.0.git2f0cb0d.el7
@@ -96,7 +95,7 @@ ip-10-0-171-135.ec2.internal   Ready     worker    24h       v1.12.4+5dc94f3fda 
 If you want to see the various applied labels, you can also do:
 
 ```
-$ oc get nodes --show-labels
+[~] $ oc get nodes --show-labels
 NAME                           STATUS    ROLES     AGE       VERSION              LABELS
 ip-10-0-137-104.ec2.internal   Ready     worker    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.large,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1a,kubernetes.io/hostname=ip-10-0-137-104,node-role.kubernetes.io/worker=
 ip-10-0-140-138.ec2.internal   Ready     master    23h       v1.12.4+5dc94f3fda   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/instance-type=m4.xlarge,beta.kubernetes.io/os=linux,failure-domain.beta.kubernetes.io/region=us-east-1,failure-domain.beta.kubernetes.io/zone=us-east-1a,kubernetes.io/hostname=ip-10-0-140-138,node-role.kubernetes.io/master=
@@ -113,7 +112,7 @@ For reference, labels are used as a mechanism to tag certain information onto a 
 The cluster version operator is the core of what defines an OpenShift deployment . The cluster version operator pod(s) contains the set of manifests which are used to deploy, updated, and/or manage the OpenShift services in the cluster. This operator ensures that the other services, also deployed as operators, are at the version which matches the release definition and takes action to remedy discrepancies when necessary.
 
 ```
-$ oc get deployments -n openshift-cluster-version
+[~] $ oc get deployments -n openshift-cluster-version
 NAME                       DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
 cluster-version-operator   1         1         1            1           2h
 ```
@@ -121,58 +120,58 @@ cluster-version-operator   1         1         1            1           2h
 You can also view the current version of the OpenShift cluster and give you a high-level indication of the status:
 
 ```
-$oc get clusterversion
+[~] $oc get clusterversion
 NAME      VERSION      AVAILABLE   PROGRESSING   SINCE   STATUS
-version   4.1.0-rc.3   True        False         23h     Cluster version is 4.1.0-rc.3
+version   4.1.0-rc.5   True        False         23h     Cluster version is 4.1.0-rc.5
 ```
 
 If you want to review a list of operators that the cluster version operator is controlling, along with their status, you can ask for a list of the cluster operators:
 
 ```
-$ oc get clusteroperator
+[~] $ oc get clusteroperator
 NAME                                 VERSION      AVAILABLE   PROGRESSING   DEGRADED   SINCE
-authentication                       4.1.0-rc.3   True        False         False      23h
-cloud-credential                     4.1.0-rc.3   True        False         False      23h
-cluster-autoscaler                   4.1.0-rc.3   True        False         False      23h
-console                              4.1.0-rc.3   True        False         False      23h
-dns                                  4.1.0-rc.3   True        False         False      23h
-image-registry                       4.1.0-rc.3   True        False         False      23h
-ingress                              4.1.0-rc.3   True        False         False      23h
-kube-apiserver                       4.1.0-rc.3   True        False         False      23h
-kube-controller-manager              4.1.0-rc.3   True        False         False      23h
-kube-scheduler                       4.1.0-rc.3   True        False         False      23h
-machine-api                          4.1.0-rc.3   True        False         False      23h
-machine-config                       4.1.0-rc.3   True        False         False      23h
-marketplace                          4.1.0-rc.3   True        False         False      23h
-monitoring                           4.1.0-rc.3   True        False         False      23h
-network                              4.1.0-rc.3   True        False         False      23h
-node-tuning                          4.1.0-rc.3   True        False         False      23h
-openshift-apiserver                  4.1.0-rc.3   True        False         False      23h
-openshift-controller-manager         4.1.0-rc.3   True        False         False      23h
-openshift-samples                    4.1.0-rc.3   True        False         False      23h
-operator-lifecycle-manager           4.1.0-rc.3   True        False         False      23h
-operator-lifecycle-manager-catalog   4.1.0-rc.3   True        False         False      23h
-service-ca                           4.1.0-rc.3   True        False         False      23h
-service-catalog-apiserver            4.1.0-rc.3   True        False         False      23h
-service-catalog-controller-manager   4.1.0-rc.3   True        False         False      23h
-storage                              4.1.0-rc.3   True        False         False      23h
+authentication                       4.1.0-rc.5   True        False         False      23h
+cloud-credential                     4.1.0-rc.5   True        False         False      23h
+cluster-autoscaler                   4.1.0-rc.5   True        False         False      23h
+console                              4.1.0-rc.5   True        False         False      23h
+dns                                  4.1.0-rc.5   True        False         False      23h
+image-registry                       4.1.0-rc.5   True        False         False      23h
+ingress                              4.1.0-rc.5   True        False         False      23h
+kube-apiserver                       4.1.0-rc.5   True        False         False      23h
+kube-controller-manager              4.1.0-rc.5   True        False         False      23h
+kube-scheduler                       4.1.0-rc.5   True        False         False      23h
+machine-api                          4.1.0-rc.5   True        False         False      23h
+machine-config                       4.1.0-rc.5   True        False         False      23h
+marketplace                          4.1.0-rc.5   True        False         False      23h
+monitoring                           4.1.0-rc.5   True        False         False      23h
+network                              4.1.0-rc.5   True        False         False      23h
+node-tuning                          4.1.0-rc.5   True        False         False      23h
+openshift-apiserver                  4.1.0-rc.5   True        False         False      23h
+openshift-controller-manager         4.1.0-rc.5   True        False         False      23h
+openshift-samples                    4.1.0-rc.5   True        False         False      23h
+operator-lifecycle-manager           4.1.0-rc.5   True        False         False      23h
+operator-lifecycle-manager-catalog   4.1.0-rc.5   True        False         False      23h
+service-ca                           4.1.0-rc.5   True        False         False      23h
+service-catalog-apiserver            4.1.0-rc.5   True        False         False      23h
+service-catalog-controller-manager   4.1.0-rc.5   True        False         False      23h
+storage                              4.1.0-rc.5   True        False         False      23h
 ```
 
 Or a more comprehensive way of getting a list of operators running on the cluster, along with the link to the code, the documentation, and the commit that provided the functionality is as follows
 
 ```
 [~] $ oc adm release info --commits
-Name:      4.1.0-rc.3
+Name:      4.1.0-rc.5
 Digest:    sha256:713aae8687cf8a3cb5c2c504f65532dfe11e1b3534448ea9eeef5b0931d3e208
 Created:   2019-05-10 18:39:16 +0000 UTC
 OS/Arch:   linux/amd64
 Manifests: 287
 
 Release Metadata:
-  Version:  4.1.0-rc.3
+  Version:  4.1.0-rc.5
   Upgrades: <none>
   Metadata:
-    description: beta 5
+    description: beta 7
   Metadata:
     url: https://errata.devel.redhat.com/advisory/38252
 
@@ -269,7 +268,7 @@ Images:
 You can also rsh (remote shell access) into the running Operator and see the various manifests associated with the installed release of OpenShift:
 
 ```
-$ oc rsh -n openshift-cluster-version deployments/cluster-version-operator
+[~] $ oc rsh -n openshift-cluster-version deployments/cluster-version-operator
 ```
 
 Then to list the available manifests:
@@ -366,8 +365,8 @@ NOTE: Don't forget to exit from your rsh session before continuing...
 If you want to look at what the Cluster Operator has done since it was launched, you can execute the following:
 
 ```
-$ oc logs deployments/cluster-version-operator -n openshift-cluster-version > operatorlog.txt
-$ tail operatorlog.txt
+[~] $ oc logs deployments/cluster-version-operator -n openshift-cluster-version > operatorlog.txt
+[~] $ tail operatorlog.txt
 I0514 20:48:05.887605       1 cvo.go:338] Finished syncing cluster version "openshift-cluster-version/version" (165.875µs)
 I0514 20:48:20.887420       1 cvo.go:336] Started syncing cluster version "openshift-cluster-version/version" (2019-05-14 20:48:20.88740786 +0000 UTC m=+87191.276686302)
 I0514 20:48:20.887478       1 cvo.go:364] Desired version from operator is v1.Update{Version:"4.1.0-rc.3", Image:"quay.io/openshift-release-dev/ocp-release@sha256:713aae8687cf8a3cb5c2c504f655

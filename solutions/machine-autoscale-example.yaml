@@ -1,0 +1,40 @@
+kind: List
+metadata: {}
+apiVersion: v1
+items:
+- apiVersion: "autoscaling.openshift.io/v1beta1"
+  kind: "MachineAutoscaler"
+  metadata:
+    generateName: autoscale-<aws-region-az>-
+    namespace: "openshift-machine-api"
+  spec:
+    minReplicas: 1
+    maxReplicas: 4
+    scaleTargetRef:
+      apiVersion: machine.openshift.io/v1beta1
+      kind: MachineSet
+      name: <clusterid>-worker-<aws-region-az>
+- apiVersion: "autoscaling.openshift.io/v1beta1"
+  kind: "MachineAutoscaler"
+  metadata:
+    generateName: autoscale-<aws-region-az>-
+    namespace: "openshift-machine-api"
+  spec:
+    minReplicas: 1
+    maxReplicas: 4
+    scaleTargetRef:
+      apiVersion: machine.openshift.io/v1beta1
+      kind: MachineSet
+      name: <clusterid>-worker-<aws-region-az>
+- apiVersion: "autoscaling.openshift.io/v1beta1"
+  kind: "MachineAutoscaler"
+  metadata:
+    generateName: autoscale-<aws-region-az>-
+    namespace: "openshift-machine-api"
+  spec:
+    minReplicas: 1
+    maxReplicas: 4
+    scaleTargetRef:
+      apiVersion: machine.openshift.io/v1beta1
+      kind: MachineSet
+      name: <clusterid>-worker-<aws-region-az>
