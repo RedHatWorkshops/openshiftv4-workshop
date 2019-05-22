@@ -11,10 +11,11 @@ OperatorHub is a feature built into your cluster to discover and install Operato
 
 Within OperatorHub, you will find three sets of Operators available to you:
 
-Red Hat Products - licensed software that is tested extensively on OpenShift 4.
-Certified Partners - partners that have certified their applications for OpenShift and have established a mutual support SLA with Red Hat, in order to provide you with the best experience.
-Community - a set of curated Operators built by the Kubernetes community and work well with the Operator Lifecycle Management software already installed on your cluster.
-In this example we're going to deploy Couchbase through the Operator framework in OpenShift 4; Couchbase is a powerful NoSQL database implementation.
+  - Red Hat Products - licensed software that is tested extensively on OpenShift 4.
+  - Certified Partners - partners that have certified their applications for OpenShift and have established a mutual support SLA with Red Hat, in order to provide you with the best experience.
+  - Community - a set of curated Operators built by the Kubernetes community and work well with the Operator Lifecycle Management software already installed on your cluster.
+
+In this example, we're going to deploy Couchbase through the Operator framework in OpenShift 4. Couchbase is a powerful NoSQL database implementation.
 
 === Create a Project
 
@@ -26,7 +27,7 @@ Now using project "mycouchbase" on server "https://api.cluster-3e5f.sandbox580.o
 ```
 or create from console
 
-*Installing an Extension*
+=== Installing an Extension
 
 - Installing your first Operator is best done through the user interface, but can also be driven by the command line. Let's complete this section using the web console:
 
