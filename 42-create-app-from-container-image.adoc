@@ -16,7 +16,7 @@ IMPORTANT: Please replace *Username* with your username
 - Click `Create Project`
 - Enter *web-terminal-Username* as name of the project. The display name and description is optional.
 
-image::ocp4-deploy-image.png[image]
+image::create-project.png[image]
 
 === Deploy an Image
 
@@ -32,7 +32,7 @@ image::search.png[image]
 - Scroll down a bit and provide an environment variable.
 - Add `OC_VERSION` and `4.1` as `Environment Variable` at the bottom on the page.
 
-image::create-project.png[image]
+image::ocp4-deploy-image.png[image]
 
 - Click `Deploy`
 - On the left-hand side menu, select `Workload` and then select `Deployments Configs`
