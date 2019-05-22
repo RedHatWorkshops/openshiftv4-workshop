@@ -18,6 +18,8 @@ IMPORTANT: Please replace *Username* with your username
 
 image::create-project.png[image]
 
+- Click `Create`
+
 === Deploy an Image
 
 - Click `Deploy Image`, or in the top-right, click the *Add* drop-down menu and select `Deploy Image`
@@ -25,12 +27,11 @@ image::create-project.png[image]
   noting that there's no `http://`, enter exactly as shown here,
   without the quotes, and then select the magnifying glass to the right of the box,
   this will show you more information about the image.
-- Click on search icon:
-image::search.png[image]
+- Click on search icon:image::search.png[image]
 
 - Enter a Name for the deployment
 - Scroll down a bit and provide an environment variable.
-- Add `OC_VERSION` and `4.1` as `Environment Variable` at the bottom on the page.
+- Add `OC_VERSION` and `4.1` as `Environment Variable` section at the bottom on the page.
 
 image::ocp4-deploy-image.png[image]
 
@@ -44,7 +45,7 @@ image::ocp4-dc.png[image]
 
 image::ocp4-terminal.png[image]
 
-- On the left-hand side menu, select `Home` and then select `Events` to check status on each events. Events in OpenShift Container Platform are modeled based on events that happen to API objects in an OpenShift Container Platform cluster. Events allow OpenShift Container Platform to record information about real-world events in a resource-agnostic manner.
+- On the left-hand side menu, select `Home` and then select `Events` to check status on each events. Events in OpenShift Container Platform are modeled based on events that happen to API objects in an OpenShift Container Platform cluster. Events allow OpenShift Container Platform to record information about real-world events in a resource-agnostic manner. For more information, please see https://docs.openshift.com/container-platform/3.11/security/monitoring.html#security-monitoring-events.
 
 == Create route
 
@@ -72,11 +73,12 @@ image::ocp4-web-terminal.png[image]
 - Execute the following in the terminal:
 
 ```
-$ wget https://mirror.openshift.com/pub/openshift-v3/clients/4.1.0-201904090034.git.0.1016bda.el7/linux/oc.tar.gz
+$ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.5/openshift-client-linux-4.1.0-rc.5.tar.gz
 $ tar zvxf oc.tar.gz
 $ mv oc /opt/app-root/bin/
 $ oc version
 ```
+NOTE: If normal cut/paste does not work, you can try to use browser's edit menu for cut/paste.
 
 
 Congratulations!! You now know how to create a project, an application
