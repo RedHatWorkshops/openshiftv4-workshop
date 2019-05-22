@@ -8,7 +8,7 @@ With OpenShift 4.0+, we now have the ability to dynamically scale the cluster si
 In this lab you will learn how to scale OpenShift 4 cluster both manually and automatically.
 Applying autoscaling to an OpenShift Container Platform cluster involves deploying a ClusterAutoscaler and then deploying MachineAutoscalers for each Machine type in your cluster.
 
-=== Manual Cluster Scale Up/Down
+=== Manual Cluster Scale Up
 
 In this exercise we're going to manually add worker nodes to our cluster:
 
@@ -16,30 +16,30 @@ In this exercise we're going to manually add worker nodes to our cluster:
 
 - Browse to `Compute` on the left-hand side-bar, and click `Machine Sets`.
 
-- On the Machine Sets page, select `openshift-machine-api` from the Project dropdown and you should see the machine sets:
+- Select `openshift-machine-api` from the Project dropdown and you should see the list of machine sets available for the platform:
 
 image::ocp4-machinesets.png[image]
 
 
-- Select one of the machine sets in the list by clicking on the name, e.g. "cluster-3e5f-kqr2b-worker-us-east-2a" (yours will be slightly different)
-
-- Select a worker set to scale by clicking it.
+- Select one of the machine sets in the list by clicking on the name, e.g. `cluster-3e5f-kqr2b-worker-us-east-2a` (yours will be slightly different)
 
 NOTE: Depending on the AWS region you chose, you may have several worker machine sets that can be scaled, some of which are at a scale of 0. It does not matter which set you choose for this example.
 
 - In the Actions pull down menu (on the right hand side), select Edit Count
 
-- Enter '3' and click Save
+- Enter `3` and click Save
 
 image::ocp4-ms-count.png[image]
 
-- At this point you can click the Machines tab in this Machine Set display and see the allocated machines. The Overview tab will let you know when the machines become ready. If you click Machine Sets under Machines on the left-hand side again, you will also see the status of the machines in the set:
+- Click the Machines tab and see the allocated machines.
+- Click Overview tab, it will let you know when when the machines become ready.
+- Click Machine Sets under Machines on the left-hand side again, you will also see the status of the machines in the set:
 
 image::ocp4-ms-count3.png[image]
 
-- You may need to wait a few minutes before the machines become ready. If you click Machine Sets under Machines again, you will also see the status of the machines in the set.
+- You may need to wait a few minutes before the machines become ready.
 
-It will take several minutes for the new machines to become ready. In the background additional EC2 instances are being provisioned and then registered and configured to participate in the cluster, so yours may still show 1/3.
+In the background additional EC2 instances are being provisioned and then registered and configured to participate in the cluster, so yours may still show 1/3.
 
 You can also view this in the CLI:
 
@@ -70,9 +70,12 @@ You'll note that some of these systems 'age' will be much newer than some of the
 You can alter the Machine Set count in several ways in the web UI console, but you can also perform the same operation via the CLI by using the oc edit command on the machineset in the openshift-machine-api project.
 
 ```
-$ oc edit machineset -n openshift-machine-api
-(pick the one of the machinesets)
-$ oc edit machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api
+[~] $ oc get machineset -n openshift-machine-api
+NAME                                   DESIRED   CURRENT   READY   AVAILABLE   AGE
+cluster-4c7b-lkw4d-worker-us-east-2a   1         1         1       1           6h17m
+cluster-4c7b-lkw4d-worker-us-east-2b   1         1         1       1           6h17m
+cluster-4c7b-lkw4d-worker-us-east-2c   1         1         1       1           6h17m
+[~] $ oc edit machineset cluster-4c7b-lkw4d-worker-us-east-2a -n openshift-machine-api
 (opens in vi)
 ```
 
@@ -110,9 +113,11 @@ spec:
   template:
 (...)
 ```
-NOTE: If you're uncomfortable with vi(m) you can use your favourite editor by specifying EDITOR=<your choice> before the oc command.
+NOTE: If you're uncomfortable with vi(m) you can use your favorite editor by specifying EDITOR=<your choice> before the oc command.
 
-The above is just an excerpt of the entire machine set configuration - each machine set is listed in this file, but you'll need to change just one of the sets. In the above output, you'll see a line with an arrow to signify where you can update the count - you'll need to change the replica: 1 to the count of your choice. For this example I'd recommend that you set it to '2'. To save your changes simply save and quit from your editor. OpenShift will now patch the configuration. You should see that your modified machine set (depending on which one you edited) will be confirmed:
+- The above is just an example of the entire machine set configuration. Update `replicas` from 1 to 2
+- save your changes simply save and quit from your editor.
+OpenShift will now patch the configuration. You should see that your modified machine set (depending on which one you edited) will be confirmed:
 
 Once that has been changed, you can view the outcome here:
 
@@ -124,7 +129,7 @@ cluster-3e5f-kqr2b-worker-us-east-2b   1         1         1       1           2
 cluster-3e5f-kqr2b-worker-us-east-2c   1         1         1       1           24h
 ```
 
-Again, before you move forward, return this count back to how it was before, using the same method as above.
+Again, before you move forward, return the `replica` count back to 1, using the same method as above.
 
 
 === Automatic Cluster Scale Up
@@ -143,7 +148,7 @@ cluster-3e5f-kqr2b-worker-us-east-2c   1         1         1       1           2
 Next, configure a MachineAutoScaler - you'll need to fetch the following YAML file:
 
 ```
-$wget https://raw.githubusercontent.com/openshift/training/master/assets/machine-autoscale-example.yaml
+[~] $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/machine-autoscale-example.yaml
 ```
 The file has the following contents:
 
@@ -152,7 +157,7 @@ kind: List
 metadata: {}
 apiVersion: v1
 items:
-- apiVersion: "autoscaling.openshift.io/v1alpha1"
+- apiVersion: "autoscaling.openshift.io/v1beta1"
   kind: "MachineAutoscaler"
   metadata:
     generateName: autoscale-<aws-region-az>-
@@ -164,7 +169,7 @@ items:
       apiVersion: machine.openshift.io/v1beta1
       kind: MachineSet
       name: <clusterid>-worker-<aws-region-az>
-- apiVersion: "autoscaling.openshift.io/v1alpha1"
+- apiVersion: "autoscaling.openshift.io/v1beta1"
   kind: "MachineAutoscaler"
   metadata:
     generateName: autoscale-<aws-region-az>-
@@ -176,7 +181,7 @@ items:
       apiVersion: machine.openshift.io/v1beta1
       kind: MachineSet
       name: <clusterid>-worker-<aws-region-az>
-- apiVersion: "autoscaling.openshift.io/v1alpha1"
+- apiVersion: "autoscaling.openshift.io/v1beta1"
   kind: "MachineAutoscaler"
   metadata:
     generateName: autoscale-<aws-region-az>-
@@ -197,10 +202,19 @@ When you looked at the MachineSets with the CLI, you noticed that they all had t
 ```
 MachineAutoscaler resources must be defined for each region-AZ that you want to autoscale. Using the example output and MachineSets above, and selecting "us-east-1a" as the region we're going to autoscale into, you would need to modify the YAML file to look like the following:
 
+To ensure you make no mistakes:
+
+```
+$ export CLUSTER_NAME=$(oc get machinesets -n openshift-machine-api | awk -F'-worker-' 'NR>1{print $1;exit;}')
+$ export REGION_NAME=us-east-2a
+
+$ sed -i s/\<aws-region-az\>/$REGION_NAME/g machine-autoscale-example.yaml
+$ sed -i s/\<clusterid\>/$CLUSTER_NAME/g machine-autoscale-example.yaml
+```
+
 Here is the working sample of an MachineAutoScaler:
 
 ```
-[~] $ cat machine-autoscale-example.yaml
 kind: List
 metadata: {}
 apiVersion: v1
@@ -216,7 +230,7 @@ items:
     scaleTargetRef:
       apiVersion: machine.openshift.io/v1beta1
       kind: MachineSet
-      name: cluster-3e5f-kqr2b-worker-us-east-2a
+      name: cluster-4c7b-lkw4d-worker-us-east-2a
 - apiVersion: "autoscaling.openshift.io/v1beta1"
   kind: "MachineAutoscaler"
   metadata:
@@ -228,7 +242,7 @@ items:
     scaleTargetRef:
       apiVersion: machine.openshift.io/v1beta1
       kind: MachineSet
-      name: cluster-3e5f-kqr2b-worker-us-east-2a
+      name: cluster-4c7b-lkw4d-worker-us-east-2a
 - apiVersion: "autoscaling.openshift.io/v1beta1"
   kind: "MachineAutoscaler"
   metadata:
@@ -240,32 +254,9 @@ items:
     scaleTargetRef:
       apiVersion: machine.openshift.io/v1beta1
       kind: MachineSet
-      name: cluster-3e5f-kqr2b-worker-us-east-2a
-
-apiVersion: "autoscaling.openshift.io/v1"
-kind: "ClusterAutoscaler"
-metadata:
-  name: "default"
-spec:
-  resourceLimits:
-    maxNodesTotal: 10
-  scaleDown:
-    enabled: true
-    delayAfterAdd: 10s
-    delayAfterDelete: 10s
-    delayAfterFailure: 10s
+      name: cluster-4c7b-lkw4d-worker-us-east-2a
 ```
 
-To ensure you make no mistakes:
-
-```
-$ export CLUSTER_NAME=$(oc get machinesets -n openshift-machine-api | awk -F'-worker-' 'NR>1{print $1;exit;}')
-$ export REGION_NAME=us-east-2a
-
-$ sed -i s/\<aws-region-az\>/$REGION_NAME/g machine-autoscale-example.yaml
-$ sed -i s/\<clusterid\>/$CLUSTER_NAME/g machine-autoscale-example.yaml
-$ sed -i s/v1alpha1/v1beta1/g machine-autoscale-example.yaml (if OCP 4.1 is used)
-```
 NOTE: If you aren't deployed into this region, or don't want to use us-east-2a, adapt the instructions to suit.
 
 **Make sure** that you properly modify both generateName and name. Note which one has the <clusterid> and which one does not. Note that generateName has a trailing hyphen. You can specify the minimum and maximum quantity of nodes that are allowed to be created by adjusting the minReplicas and maxReplicas.
@@ -289,14 +280,31 @@ https://raw.githubusercontent.com/openshift/training/master/assets/cluster-autos
 This definition is set for a maximum of 20 workers, but we need to reduce that with our labs to minimize the cost. Let's first download that file:
 
 ```
-wget https://raw.githubusercontent.com/openshift/training/master/assets/cluster-autoscaler.yaml
-(...)
+[~] $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/cluster-auto
+scaler.yaml
 ```
 
 Now modify the max number of replicas:
 
 ```
 $ sed -i s/20/10/g cluster-autoscaler.yaml
+```
+
+Here is an example of ClusterAutoscaler yaml.
+
+```
+apiVersion: "autoscaling.openshift.io/v1"
+kind: "ClusterAutoscaler"
+metadata:
+  name: "default"
+spec:
+  resourceLimits:
+    maxNodesTotal: 10
+  scaleDown:
+    enabled: true
+    delayAfterAdd: 10s
+    delayAfterDelete: 10s
+    delayAfterFailure: 10s
 ```
 
 Next, we can simply create the ClusterAutoscaler with the following command:
@@ -328,15 +336,24 @@ Now using project "autoscale-example" on server "{{API_URL}}".
 ```
 
 ==== Open Grafana
-In the OpenShift web console, click Monitoring and then click Dashboards. This will open a new browser tab for Grafana. You will also get a certificate error similar to the first time you logged in. This is because Grafana has its own SSL certificate. You will then see a login button. Grafana is configured to use an OpenShift user and inherits permissions of that user for accessing cluster information. This happens to be the user you're already logged into the web console with.
 
-Finally, allow the permissions, and then you will see the Grafana homepage.
+- Go to OpenShift web console
+- click Monitoring and then click Dashboards.
+- This will open a new browser tab for Grafana. You will also get a certificate error similar to the first time you logged in.
+- Click `Advance` when you see the SSL certificate error.
+- Click `Process to ...` link
+- Click `Log in with OpenShift`
+- Click `my_htpasswd_provider`
+- Enter your provided admin username and password and click login
+- CLick `Allow selected permissions`
+- you will see the Grafana homepage.
+Grafana is configured to use an OpenShift user and inherits permissions of that user for accessing cluster information.
 
-Click the dropdown on Home and choose Kubernetes / Compute Resources / Cluster. Leave this browser window open while you start the Job so that you can observe the CPU utilization of the cluster rise:
+- Click the dropdown on `Home` and choose `Kubernetes / Compute Resources / Cluster`. Leave this browser window open while you start the Job so that you can observe the CPU utilization of the cluster rise:
 
 image::ocp4-grafana.png[image]
 
-**Force an Autoscaling Event**
+==== Force an Autoscaling Event
 
 Now we're ready to create the Job:
 
