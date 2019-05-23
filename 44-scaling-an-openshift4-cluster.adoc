@@ -422,9 +422,8 @@ worker nodes. You can watch the output with the following (runs every 10s)-
 $ watch -n10 'oc get machines -n openshift-machine-api'
 ```
 
-- In Grafana, be sure to click the autoscale-example project in the graphs,
-otherwise the interesting things happening might get drowned out by the rest of the baseline.
+- In Grafana, be sure to click the autoscale-example project in the graphs
 
-
+image::ocp4-grafana.png[image]
 
 Congratulations!! You now know how OpenShift 4 cluster scaling works!! For more information, see https://docs.openshift.com/container-platform/4.1/machine_management/applying-autoscaling.html for details.
