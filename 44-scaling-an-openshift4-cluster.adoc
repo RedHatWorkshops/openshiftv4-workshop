@@ -67,7 +67,9 @@ You'll note that some of these systems 'age' will be much newer than some of the
 
 ==== Manual Cluster Scale Up/Down via the CLI (Option 2)
 
-You can alter the Machine Set count in several ways in the web UI console, but you can also perform the same operation via the CLI by using the oc edit command on the machineset in the openshift-machine-api project.
+- You can alter the Machine Set count in several ways in the web UI console,
+but you can also perform the same operation via the CLI by using the oc edit
+command on the machineset in the openshift-machine-api project.
 
 ```
 [~] $ oc get machineset -n openshift-machine-api
@@ -79,7 +81,7 @@ cluster-4c7b-lkw4d-worker-us-east-2c   1         1         1       1           6
 (opens in vi)
 ```
 
-You will see the following text:
+- You will see the following text:
 
 ```
 # Please edit the object below. Lines beginning with a '#' will be ignored,
@@ -116,10 +118,11 @@ spec:
 NOTE: If you're uncomfortable with vi(m) you can use your favorite editor by specifying EDITOR=<your choice> before the oc command.
 
 - The above is just an example of the entire machine set configuration. Update `replicas` from 1 to 2
-- save your changes simply save and quit from your editor.
-OpenShift will now patch the configuration. You should see that your modified machine set (depending on which one you edited) will be confirmed:
+- Save your changes simply save and quit from your editor.
+OpenShift will now patch the configuration. You should see that your modified
+machine set (depending on which one you edited) will be confirmed:
 
-Once that has been changed, you can view the outcome here:
+- Once that has been changed, you can view the outcome here:
 
 ```
 [~] $ oc get machinesets -n openshift-machine-api
@@ -134,7 +137,9 @@ Again, before you move forward, return the `replica` count back to 1, using the 
 
 === Automatic Cluster Scale Up
 
-OpenShift can automatically scale the infrastructure based on workload provided there is a configuration specified to do so. Before we begin, ensure that your cluster is back to having three nodes running:
+OpenShift can automatically scale the infrastructure based on workload provided
+there is a configuration specified to do so. Before we begin, ensure that your
+cluster is back to having three nodes running:
 
 ```
 [~] $ oc get machinesets -n openshift-machine-api
@@ -145,7 +150,8 @@ cluster-3e5f-kqr2b-worker-us-east-2c   1         1         1       1           2
 ```
 
 ==== Define a MachineAutoScaler
-Next, configure a MachineAutoScaler - you'll need to fetch the following YAML file:
+
+- Configure a MachineAutoScaler - you'll need to fetch the following YAML file:
 
 ```
 [~] $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/machine-autoscale-example.yaml
@@ -195,14 +201,18 @@ items:
       name: <clusterid>-worker-<aws-region-az>
 ```
 
-When you looked at the MachineSets with the CLI, you noticed that they all had the format of:
+- Check the MachineSets with the CLI, you noticed that they all had the format of:
 
 ```
 <clusterid>-worker-<aws-region-az>
 ```
-MachineAutoscaler resources must be defined for each region-AZ that you want to autoscale. Using the example output and MachineSets above, and selecting "us-east-1a" as the region we're going to autoscale into, you would need to modify the YAML file to look like the following:
 
-To ensure you make no mistakes:
+MachineAutoscaler resources must be defined for each region-AZ that you want to
+autoscale. Using the example output and MachineSets above, and selecting "us-east-2a"
+as the region we're going to autoscale into, you would need to modify the YAML
+file to look like the following:
+
+- To ensure you make no mistakes, here is the command you can use to update the yaml
 
 ```
 $ export CLUSTER_NAME=$(oc get machinesets -n openshift-machine-api | awk -F'-worker-' 'NR>1{print $1;exit;}')
@@ -212,7 +222,7 @@ $ sed -i s/\<aws-region-az\>/$REGION_NAME/g machine-autoscale-example.yaml
 $ sed -i s/\<clusterid\>/$CLUSTER_NAME/g machine-autoscale-example.yaml
 ```
 
-Here is the working sample of an MachineAutoScaler:
+- Here is the working sample of an MachineAutoScaler:
 
 ```
 [~] $ cat machine-autoscale-example.yaml
@@ -266,7 +276,8 @@ You do not have to define a MachineAutoScaler for each MachineSet. But remember 
 
 NOTE: You should probably choose a small-ish number for maxReplicas. The next lab will autoscale the cluster up to that maximum. You're paying for the EC2 instances.
 
-Once the file has been modified appropriately, you can now create the autoscaler:
+
+- Once the file has been modified appropriately, you can now create the autoscaler:
 
 ```
 $ oc create -f machine-autoscale-example.yaml -n openshift-machine-api
@@ -274,23 +285,25 @@ $ oc create -f machine-autoscale-example.yaml -n openshift-machine-api
 
 ==== Define a ClusterAutoscaler
 
-Next we need to define a ClusterAutoscaler, this configures some boundaries and behaviors for how the cluster will autoscale. An example definition file can be found at:
+- Define a ClusterAutoscaler, this configures some boundaries and behaviors for
+how the cluster will autoscale. An example definition file can be found at:
 
-https://raw.githubusercontent.com/openshift/training/master/assets/cluster-autoscaler.yaml
+https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/cluster-autoscaler.yaml
 
-This definition is set for a maximum of 20 workers, but we need to reduce that with our labs to minimize the cost. Let's first download that file:
+- This definition is set for a maximum of 20 workers, but we need to reduce that
+with our labs to minimize the cost. Let's first download that file:
 
 ```
 [~] $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/cluster-autoscaler.yaml
 ```
 
-Now modify the max number of replicas:
+- Modify the max number of replicas:
 
 ```
 $ sed -i s/20/10/g cluster-autoscaler.yaml
 ```
 
-Here is an example of ClusterAutoscaler yaml.
+- Here is an example of ClusterAutoscaler yaml.
 
 ```
 [~] $ cat machine-autoscale-example.yaml
@@ -308,7 +321,7 @@ spec:
     delayAfterFailure: 10s
 ```
 
-Next, we can simply create the ClusterAutoscaler with the following command:
+- Create the ClusterAutoscaler with the following command:
 
 ```
 $ oc create -f cluster-autoscaler.yaml
@@ -324,11 +337,12 @@ The following example YAML file defines a Job:
 
 https://raw.githubusercontent.com/openshift/training/master/assets/job-work-queue.yaml
 
-It will produce a massive load that the cluster cannot handle, and will force the autoscaler to take action (up to the maxReplicas defined in your ClusterAutoscaler YAML).
+It will produce a massive load that the cluster cannot handle, and will force the
+autoscaler to take action (up to the maxReplicas defined in your ClusterAutoscaler YAML).
 
 NOTE: If you did not scale down your machines earlier, you may have too much capacity to trigger an autoscaling event. Make sure you have no more than 3 total workers before continuing.
 
-Create a project to hold the resources for the Job, and switch into it:
+- Create a project to hold the resources for the Job, and switch into it:
 
 ```
 $ oc adm new-project autoscale-example && oc project autoscale-example
@@ -356,14 +370,14 @@ image::ocp4-grafana.png[image]
 
 ==== Force an Autoscaling Event
 
-Now we're ready to create the Job:
+- Create the Job:
 
 ```
 $ oc create -n autoscale-example -f https://raw.githubusercontent.com/openshift/training/master/assets/job-work-queue.yaml
 job.batch/work-queue-qncs2 created
 ```
 
-You will see a note that the Job was created. It will create a lot of Pods:
+-Check status of the Job. It will create a lot of Pods:
 
 ```
 $ oc get pod -n autoscale-example
@@ -379,7 +393,7 @@ work-queue-qncs2-8k76z   0/1       Pending   0          32s
 (...)
 ```
 
-After a few moments, look at the list of Machines:
+- After a few moments, look at the list of Machines:
 
 ```
 $ oc get machines -n openshift-machine-api
@@ -395,15 +409,21 @@ beta-190305-1-79tf5-worker-us-east-2b-hjv9c   i-0562517168aadffe7   running   m4
 beta-190305-1-79tf5-worker-us-east-2c-cdhth   i-09fbcd1c536f2a218   running   m4.large    us-east-2   us-east-2c   26h
 ```
 
-You should see a scaled-up cluster with three new additions as worker nodes in us-east-2a, you can see the ones that have been auto-scaled from their age.
+- You should see a scaled-up cluster with three new additions as worker nodes in
+us-east-2a, you can see the ones that have been auto-scaled from their age.
 
-Depending on when you run the command, your list may show all running workers, or some pending. After the Job completes, which could take anywhere from a few minutes to ten or more (depending on your ClusterAutoscaler size and your MachineAutoScaler sizes), the cluster should scale down to the original count of worker nodes. You can watch the output with the following (runs every 10s)-
+- Depending on when you run the command, your list may show all running workers,
+or some pending. After the Job completes, which could take anywhere from a few
+minutes to ten or more (depending on your ClusterAutoscaler size and your
+MachineAutoScaler sizes), the cluster should scale down to the original count of
+worker nodes. You can watch the output with the following (runs every 10s)-
 
 ```
 $ watch -n10 'oc get machines -n openshift-machine-api'
 ```
 
-In Grafana, be sure to click the autoscale-example project in the graphs, otherwise the interesting things happening might get drowned out by the rest of the baseline.
+- In Grafana, be sure to click the autoscale-example project in the graphs,
+otherwise the interesting things happening might get drowned out by the rest of the baseline.
 
 
 

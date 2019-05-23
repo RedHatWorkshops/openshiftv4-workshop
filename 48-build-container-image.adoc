@@ -1,0 +1,205 @@
+[[build-container-image]]
+= Build Container Images
+== Build Container Images
+
+In this exercise we will learn how to create a container image based on Red Hat's
+Universal Base Image (UBI) for a PHP application.
+
+The default Dockerfile uses the standard UBI image for RHEL 7 and PHP with Apache
+HTTPd from the Software Collections Library (SCL).
+
+There are also Dockerfile variants using UBI for RHEL 8 and the minimal UBI
+container images. The RHEL 8 variants take PHP and Apache HTTPd from AppStreams
+because there are no more SCLs for RHEL 8.
+
+For more information about UBI, see:
+
+- https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image
+- https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/building_running_and_managing_containers/index?lb_target=stage#using_red_hat_universal_base_images_standard_minimal_and_runtimes
+
+For more information about SCL, see:
+
+- https://access.redhat.com/documentation/en-us/red_hat_software_collections/3/
+
+=== Getting a Red Hat Developer's Acccout
+
+- You need a Red Hat Developer's account to grab the service account user name and
+token to download the UBI base images. It is free. :-) You can also use the
+unauthenticated registry while it is still available.
+  * Register and create account at https://developers.redhat.com
+  * Login to https://developers.redhat.com
+  * Go to https://access.redhat.com/terms-based-registry/
+  * Click create your registry service account.
+  * Click to `OpenShift Secret`
+  * Download the secret yaml file (save this later for this lab)
+
+
+=== Create a project
+
+IMPORTANT: Please replace *Username* with your username. It should be all lowercase and no spaces.
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- On the left-hand side menu, select `Home` and then select `Project`
+- Click `Create Project`
+- Enter *buildimage-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+- Click `Create`
+
+- Alternatively, you can run this command below via CLI.
+....
+$ oc project mycliproject-userxx
+....
+
+=== Create an application that uses Dockerfile
+
+- What you can build your container image locally via podman with steps before.
+We can build the container image on OpenShift as well and deploy the container on a container platform.
+
+```
+$ git clone https://github.com/flozanorht/testphp-ubi.git
+$ cd testphp
+$ sudo podman login -u <your service account name> -p <your service account token>
+$ sudo podman build -t php-ubi .
+$ sudo podman run --name hello -p 8080:8080 -d localhost/php-ubi
+$ curl localhost:8080
+<html>
+<body>
+Hello world!
+</body>
+</html>
+$ sudo podman stop hello
+$ sudo podman rm hello
+```
+
+You can use similar docker command to build container images. This lab is focus on all Red Hat container tools.
+See https://github.com/containers/libpod/blob/master/install.md for installation details.
+
+- Download your service account from https://access.redhat.com/terms-based-registry/ as an OpenShift secret as shown in the previous section.
+- Save the secret yaml file to your local filesystem as my-service-account-pull-secret.yaml
+- Login to the CLI terminal and execute the following
+- Create a secret from the file you downloaded from last step.
+
+```
+$ oc project buildimage-Username
+$ oc create -f my-service-account-pull-secret.yaml
+```
+
+- Links that secret to your project's builder service account. Your secret name may be different from the one listed.
+
+```
+[~] $ oc get secrets
+NAME                              TYPE                                  DATA
+AGE
+12182981-shannachan-pull-secret   kubernetes.io/dockerconfigjson        1
+...
+
+[~] $ oc secrets link builder 12182981-shannachan-pull-secret
+```
+
+- Create an application via the Dockerfile
+
+```
+[~] $ oc new-app --name hello https://github.com/flozanorht/testphp-ubi.git
+--> Found Docker image c096c0d (5 weeks old) from registry.redhat.io for "regis
+try.redhat.io/ubi7/ubi"
+
+    Red Hat Universal Base Image 7
+    ------------------------------
+    The Universal Base Image is designed and engineered to be the base layer fo
+r all of your containerized applications, middleware and utilities. This base i
+mage is freely redistributable, but Red Hat only supports Red Hat technologies
+through subscriptions for Red Hat products. This image is maintained by Red Hat
+ and updated regularly.
+
+    Tags: base rhel7
+
+    * An image stream tag will be created as "ubi:latest" that will track the s
+ource image
+    * A Docker build using source code from https://github.com/flozanorht/testp
+hp-ubi.git will be created
+      * The resulting image will be pushed to image stream tag "hello:latest"
+      * Every time "ubi:latest" changes a new build will be triggered
+    * This image will be deployed in deployment config "hello"
+    * Port 8080/tcp will be load balanced by service "hello"
+      * Other containers can access this service through the hostname "hello"
+    * WARNING: Image "registry.redhat.io/ubi7/ubi" runs as the 'root' user whic
+h may not be permitted by your cluster administrator
+
+--> Creating resources ...
+    imagestream.image.openshift.io "ubi" created
+    imagestream.image.openshift.io "hello" created
+    buildconfig.build.openshift.io "hello" created
+    deploymentconfig.apps.openshift.io "hello" created
+    service "hello" created
+--> Success
+    Build scheduled, use 'oc logs -f bc/hello' to track its progress.
+    Application is not exposed. You can expose services to the outside world by
+ executing one or more of the commands below:
+     'oc expose svc/hello'
+    Run 'oc status' to view your app.
+```
+- Wait for the build to finish
+
+```
+[~] $ oc logs -f bc/hello
+Cloning "https://github.com/flozanorht/testphp-ubi.git" ...
+        Commit: c959400885894c66402f9578d24d1dcda77aedf1 (Fixed placeholder pro
+ject name in curl)
+        Author: flozanorht <flozano@redhat.com>
+        Date:   Fri May 17 17:30:30 2019 -0300
+Replaced Dockerfile FROM image registry.redhat.io/ubi7/ubi
+Caching blobs under "/var/cache/blobs".
+
+Pulling image registry.redhat.io/ubi7/ubi@sha256:d4c6c9f36f1050365b1c488893eb16
+49eb5ab5171588806896cb781bba35e698 ...
+Getting image source signatures
+Copying blob sha256:99f178453a43da0ebc09f2ca0744a3ef4aa20efaa137bce8d15c87577c2
+96c75
+...
+Writing manifest to image destination
+Storing signatures
+Successfully pushed //image-registry.openshift-image-registry.svc:5000/testdock
+er/hello:latest@sha256:787cb6df4932b89dd6f891c9fdd342ca1a2cc7bce4c52ca3c9089ec9
+0c863b83
+Push successful
+```
+
+- Wait for the application pod to be ready and Running
+
+```
+[~] $ oc get pods
+NAME             READY   STATUS      RESTARTS   AGE
+hello-1-8mf6f    1/1     Running     0          34s
+hello-1-build    0/1     Completed   0          2m2s
+hello-1-deploy   0/1     Completed   0          43s
+```
+
+- Create a route for the application's service
+
+```
+[~] $ oc expose svc hello
+route.route.openshift.io/hello exposed
+```
+
+- Test the application using route
+
+```
+[~] $ oc get route
+NAME    HOST/PORT                                                   PATH   SERV
+ICES   PORT       TERMINATION   WILDCARD
+hello   hello-testdocker.apps.cluster-4c7b.sandbox575.opentlc.com          hell
+o      8080-tcp                 None
+[~] $ curl hello-testdocker.apps.cluster-4c7b.sandbox575.opentlc.com
+<html>
+<body>
+Hello, world!
+</body>
+</html>
+```
+
+
+Congratulations!! In this exercise you have learnt how to create, build
+and deploy an application using OpenShift's "Build Container strategy".
