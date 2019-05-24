@@ -10,12 +10,16 @@ In this lab, we're aiming to get you familiar with Red Hat OpenShift Container P
  * Building and deploying a sample app with odo and Red Hat Middleware
  * A preview of a new middleware framework named Quarkus, with features like a unified Reactive and Imperative programming model, native image compilation, blazingly fast startup times, and Live Reloading of Java code.
 
-We feel that giving you a hands-on overview of developing apps on OpenShift will be a lot more beneficial than just delivering slideware. We want to make sure that you know how the components fit together, and how to use it. We will use a combination of command-line tools (oc, odo) and interaction via the OpenShift Web Console and CodeReady Workspaces.
-
 
 === Install Operators
 
-In this lab we will use CodeReady to create and work with a sample app based on Red Hat Data Grid. To get access to CodeReady and Data Grid services, you need to point to a special repo containing operator catalog entries. Install this catalog using the following oc command, noting that you'll have to copy from cat to EOF, and paste it in. This will create a custom OperatorSource object that will bring in the Operator catalog items needed for this workshop and make it available via OperatorHub:
+In this lab we will use CodeReady to create and work with a sample app based on
+Red Hat Data Grid. To get access to CodeReady and Data Grid services, you need
+to point to a special repo containing operator catalog entries. Install this
+catalog using the following oc command, noting that you'll have to copy from cat
+to EOF, and paste it in. This will create a custom OperatorSource object that
+will bring in the Operator catalog items needed for this workshop and make it
+available via OperatorHub:
 
 ```
 cat <<EOF | oc create -f -
@@ -41,63 +45,98 @@ operatorsource.operators.coreos.com/devday-operators created
 
 === Create Project
 
-Let's first create a developer project. Use the OpenShift Web Console, navigate to Home > Projects, and click Create Project to create a new project named **devday-Username**.
-IMPORTANT: Please replace *Username* with your username
+Let's first create a developer project.
+
+IMPORTANT: Please replace *Username* with your username. It should be all lowercase and no spaces.
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- On the left-hand side menu, select `Home` and then select `Project`
+- Click `Create Project`
+- Enter *devday-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+- Click `Create`
+
+- Alternatively, you can run this command below via CLI.
+....
+$ oc project mycliproject-userxx
+....
+
 
 Alternatively, if you're more comfortable with the CLI, you can do it with oc new-project devday-**Username**
 
 
 image::ocp4-newproject.png[image]
 
+
 === Install Red Hat Data Grid
 
-In our new project we will first deploy Red Hat Data Grid, a high performance, distributed data grid which our sample application will use for its reactive capabilities. Navigate to Catalog > Operator Hub in the OpenShift Console.
+In our new project we will first deploy Red Hat Data Grid, a high performance,
+distributed data grid which our sample application will use for its reactive
+capabilities.
 
-Search for grid or browse to find Red Hat Data Grid, and click on it, and then click Install:
+- Navigate to `Catalog` -> `Operator Hub` in the OpenShift Console.
+- Search for `grid` or browse to find Red Hat Data Grid
+- Click on `Red Hat Data Grid`, and then click Install:
 
 image::datagrid-operator.png[image]
 
-We will install this Operator into our new namespace, so be sure to choose "A specific Namespace on the cluster" and choose your new project devday-**Username**, and click Subscribe to install the operator into the namespace (leave everything else on the default settings):
+- Select your new namespace, so be sure to choose `"`A specific Namespace on the
+cluster` and choose your new project devday-**Username**
+- Click `Subscribe` to install the operator into the namespace (leave everything else on the default settings):
 
 image::datagrid-sub.png[image]
 
-Note that this is not the same as installing Data Grid itself - that's the next step!
-
-Navigate to Catalog > Installed Operators, and click on the Red Hat Data Grid operator (if you do not see it yet, it may take a few minutes to appear):
-
-image::datagrid-installed.png[image]
-
-This operator exposes one API, namely Red Hat Data Grid itself, so click on the "Red Hat Data Grid" name on the left, and select "Create New". Don't change anything in the YAML file defaults, and click Create. This will cause Red Hat Data Grid to be deployed to your project's namespace and can now be used by projects. If you navigate to Workloads > Pods you'll be able to see the Data Grid pods spinning up:
+- Navigate to `Catalog` -> `Installed Operators`
+- Click on the `Red Hat Data Grid operator` (if you do not see it yet, it may take a few minutes to appear):
 
 image::datagrid-installed.png[image]
+
+- Click on the "Red Hat Data Grid" name on the left,
+- Click `Create New`
+- Don't change anything in the YAML file defaults, and click Create.
+This will cause Red Hat Data Grid to be deployed to your project's namespace and can now be used by projects.
+- Navigate to `Workloads` -> `Pods` you'll be able to see the Data Grid pods spinning up:
+
+image::datagrid-app.png[image]
+
 
 === Install CodeReady
 
-CodeReady is Red Hat's browser-based intelligent developer IDE. We'll use the CodeReady operator to deploy CodeReady so that we can use it in our project to develop our apps.
+CodeReady is Red Hat's browser-based intelligent developer IDE. We'll use the
+CodeReady operator to deploy CodeReady so that we can use it in our project
+to develop our apps.
 
-Once again, navigate to Catalog > Operator Hub.
-
-Search for codeready or browse the catalog to find the CodeReady Operator, and click on it, and then click Install:
+- Navigate to `Catalog` > `Operator Hub`.
+- Search for codeready or browse the catalog to find the CodeReady Operator
+- click on `Red Hat CodeReady`
 
 image::codeready-operator.png[image]
 
-We will install this Operator into our new namespace, just like Data Grid, so be sure to choose "A specific Namespace on the cluster" and choose devday-**Username**, and click Subscribe to install the operator into the namespace (leave everything else on the default settings):
+- Click `Install`
+- Under choose `"`A specific Namespace on the cluster` -> choose devday-**Username**
+- Click `Subscribe` to install the operator into the namespace (leave everything else on the default settings):
 
 image::codeready-install.png[image]
 
-For this workshop, we'll give the Operator administrator privileges so that it can create the needed resources. Run this command before proceeding:
+- As an Operator administrator, run this command before proceeding:
 
 ```
-$ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:devday-user1:codeready-operator -n devday-user1
+$ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:devday-user01:codeready-operator -n devday-user01
 clusterrole.rbac.authorization.k8s.io/cluster-admin added: "system:serviceaccount:devday-user1:codeready-operator"
 ```
 
-With the Operator installed, navigate to Catalog > Installed Operators, and click on the CodeReady operator on the left-hand side. This operator exposes one API, namely CodeReady itself, so click Create New on the CodeReady tile. Don't change anything in the YAML file defaults, and click Create. This will cause CodeReady to be deployed to the codeready namespace, and usable from your project's namespace.
-
-This will take several minutes to complete, and will install CodeReady into the devday-**Username** namespace. Once you see all 3 pods in the Running state using this command, then you can proceed:
+- Navigate to `Catalog` -> `Installed Operators`
+- Click on the CodeReady operator on the left-hand side.
+- Click `Create New` on the CodeReady tile. Don't change anything in the YAML file defaults
+- Click `Create`.
+- Wait for several minutes to complete, and will install CodeReady into the devday-**Username** namespace.
+Once you see all 3 pods in the Running state using this command, then you can proceed:
 
 ```
-$ oc get pods -n devday-user1
+$ oc get pods -n devday-user01
 NAME                                  READY   STATUS      RESTARTS   AGE
 codeready-operator-64b485c5f7-4t28t   1/1     Running     0          4m4s
 datagrid-1-deploy                     0/1     Completed   0          17m
@@ -105,9 +144,259 @@ datagrid-1-g72jm                      1/1     Running     0          17m
 datagrid-operator-7f6c5c5cd4-hsnk7    1/1     Running     0          20m
 ```
 
-Be sure to wait for all of these to be ready and Running before continuing, noting that the operator should show 'Completed' when it's done its job of deployment for us, so don;t worry about that one...
+- update postgres deployment yaml'registry.access.redhat.com/rhscl/postgresql-10-rhel7:1-35'
+- delete postgres pod
+- delete PVC postgres-data PVC
+- scale down/scale up the deployments
+- Navigate to `Workloads` --> `Pods` and wait for all pods to be ready
+
+image::codeready-pods.png[image]
+
+Be sure to wait for all of these to be ready and Running before continuing.
+
+=== Install Custom Stack
+
+CodeReady comes with several out-of-the-box stacks for different developer scenarios,
+but we want to create a custom stack that will give us access to a few custom tools
+within our workspaces.
+
+- Figure out the URL for CodeReady, run the following command in your Terminal:
+
+```
+[~] $ echo http://$(oc get route codeready -n devday-user01 -o jsonpath='{.spec.host}{"\n"}')
+http://codeready-devday-user01.apps.cluster-4c7b.sandbox575.opentlc.com
+```
+
+NOTE: `devday-user01` is my namespace
+
+- Open the URL in your browser
+- Click `Register` and create a new account using this information
+(it doesn't really matter what you put as long as you supply a valid-looking email address)
+
+image::codeready-register.png[image]
+
+- Login as your newly created user
+- Open browser with URL below
+
+```
+[~] $ echo http://$(oc get route codeready -n devday-user01 -o jsonpath='{.spec.host}{"\n"}')/swagger
+http://codeready-devday-user01.apps.cluster-4c7b.sandbox575.opentlc.com/swagger
+```
+
+image::codeready-swagger.png[image]
+
+- Click `Stack` API
+- Click `POST /stack`
+- Paste the following content into the body of the request
+
+```
+{
+  "name": "Devday - Java, CodeReady, odo",
+  "description": "Java JDK Stack on CentOS",
+  "scope": "general",
+  "workspaceConfig": {
+    "environments": {
+      "default": {
+        "recipe": {
+          "type": "dockerimage",
+          "content": "schtool/che-vertx-odo:latest"
+        },
+        "machines": {
+          "dev-machine": {
+            "env": {},
+            "servers": {
+              "8080/tcp": {
+                "attributes": {},
+                "protocol": "http",
+                "port": "8080"
+              },
+              "8000/tcp": {
+                "attributes": {},
+                "protocol": "http",
+                "port": "8000"
+              }
+            },
+            "volumes": {},
+            "installers": [
+              "org.eclipse.che.exec",
+              "org.eclipse.che.terminal",
+              "org.eclipse.che.ws-agent"
+            ],
+            "attributes": {
+              "memoryLimitBytes": "2147483648"
+            }
+          }
+        }
+      }
+    },
+    "commands": [
+      {
+        "commandLine": "mvn install -f ${current.project.path} -s ${current.project.path}/.settings.xml",
+        "name": "build",
+        "type": "mvn",
+        "attributes": {
+          "goal": "Build",
+          "previewUrl": ""
+        }
+      },
+      {
+        "commandLine": "mvn clean install -f ${current.project.path} -s ${current.project.path}/.settings.xml",
+        "name": "clean build",
+        "type": "mvn",
+        "attributes": {
+          "goal": "Build",
+          "previewUrl": ""
+        }
+      },
+      {
+        "commandLine": "mvn verify -f ${current.project.path} -s ${current.project.path}/.settings.xml",
+        "name": "test",
+        "type": "mvn",
+        "attributes": {
+          "goal": "Test",
+          "previewUrl": ""
+        }
+      },
+      {
+        "commandLine": "mvn clean compile quarkus:dev -f ${current.project.path}",
+        "name": "Build and Run Locally",
+        "type": "custom",
+        "attributes": {
+          "goal": "Run",
+          "previewUrl": "${server.8080/tcp}"
+        }
+      }
+    ],
+    "projects": [],
+    "defaultEnv": "default",
+    "name": "default",
+    "links": []
+  },
+  "components": [
+    {
+      "version": "---",
+      "name": "CentOS"
+    },
+    {
+      "version": "1.8.0_45",
+      "name": "JDK"
+    },
+    {
+      "version": "3.5.0",
+      "name": "Maven"
+    },
+    {
+      "version": "2.4",
+      "name": "Ansible"
+    },
+    {
+      "version": "4.0.0",
+      "name": "OpenShift CLI"
+    }
+  ],
+  "creator": "ide",
+  "tags": [
+    "Java",
+    "JDK",
+    "Maven",
+    "Ansible",
+    "CentOS",
+    "Git"
+  ],
+  "id": "java-centos-devday"
+}
+```
+
+- Click `Try it out!`
+- You should get HTTP `201` similar as shown below
+
+image::codeready-post-req.png[image]
+
+=== Create CodeReady Workspace with custom Java stacks
+
+CodeReady has the concept of Workspaces which are team collaboration areas for
+different projects. Let's create a new Workspace and base it on our new stack we created.
+
+- Navigate back to the CodeReady homepage via this URL on your browser:
+
+```
+[~] $ echo http://$(oc get route codeready -n devday-user01 -o jsonpath='{.spec.host}{"\n"}')
+http://codeready-devday-user01.apps.cluster-4c7b.sandbox575.opentlc.com
+```
+
+- Login as user01 if you are not logged in
+- `New Workspace` page should be opened
+- If not, click `Create Workspace`
+- Select the stack titled as `Devday - Java`
+- Click `Create & Open`
+
+image::codeready-workspace.png[image]
+
+==== Workaround for bug
+
+This bug prevents CodeReady Workspaces from starting up the first time on OCP 4.
+
+- Go to the CodeReady main page
+- Click on Workspaces (1)
+- Click the "Stop" button (square shape) next to your new workspace:
+
+image::codeready-stop.png[image]
+
+- You may get an error popup which you can ignore (regarding failed runtime start).
+- Click the `Start` button (Triangle/Play shape) to restart the workspace, which should workaround the bug.
+- Click the name of the workspace on the left menu (under RECENT WORKSPACES) to watch the workspace start up.
+
+After a while you should see a successful startup and empty project:
+
+image::codeready-ready.png[image]
+
+- Click `Import Project...` to import the example application we'll be working with.
+- Choose GitHub as the source of the import
+- Use `https://github.com/infinispan-demos/harry-potter-quarkus` as git URL
+- Click `Import`
+
+image::codeready-github.png[image]
+
+- Select `Java` -> `Maven` project type
+- Click `Save`.
+You've now imported the sample app, and should be able to see the codebase on
+the left project navigator:
+
+image::codeready-project.png[image]
+
+==== Configure project
+
+- Open the sample application's configuration file at src/main/resources/application.properties.
+- Replace the contents of this file with the following code:
+
+```
+quarkus.http.port=8080
+quarkus.http.host=0.0.0.0
+quarkus.infinispan-client.server-list=datagrid-hotrod.devday-user01:11222
+
+characters.filename = hp_characters.csv
+spells.filename = hp_spells.csv
+```
+
+- This will cause our application to listen on TCP port 8080, across all interfaces
+- Use the Data Grid service we previously installed: `datagrid-hotrod.devday-user01`
+
+    * datagrid-hotrod is the name of the service
+    * devday-user01 is the namespace used in this example
+
+==== Test locally
+
+Typically you will want to test your code first, before deploying to OpenShift.
+
+- On the top menu bar, you'll see a big blue "Play" button;
+- Select that and choose Build and Run Locally. It will take a minute or two to download dependencies,
+then it should be ready when you start seeing log file messages in the bottom right corner of the window like:
 
 
 
 
-Congratulations!! You now know how to install operators and deploy application via OperatorHub. From more information about operator, see https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html for more details.
+
+Congratulations!! You now know how to install operators and deploy application
+via OperatorHub. From more information about operator, see
+https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html
+for more details.

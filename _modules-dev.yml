@@ -5,16 +5,16 @@ config:
       value: openshift
     - name: CONSOLE_ADDRESS
       desc: HTTP address of the OpenShift console
-      value: https://console-openshift-console.apps.cluster-611e.sandbox205.opentlc.com
+      value: https://console-openshift-console.apps.cluster-4c7b.sandbox575.opentlc.com
     - name: APPS_ADDRESS
       desc: HTTP address suffix of apps deployed on OpenShift
-      value: apps.cluster-611e.sandbox205.opentlc.com/
+      value: apps.cluster-4c7b.sandbox575.opentlc.com/
     - name: GET_STARTED_CLI_URL
       desc: URL to documentation to configure CLI
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
     - name: API_URL
       desc: URL to API server
-      value: https://api.cluster-611e.sandbox205.opentlc.com:6443
+      value: https://api.cluster-4c7b.sandbox575.opentlc.com:6443
     - name: NEXUS_URL
       desc: URL to Nexus repository
       value: http://nexus-workshop.apps.experian-fbef.openshiftworkshop.com/repository/maven-public/
@@ -23,7 +23,7 @@ config:
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
 
 modules:
-  0a-setting-up-client-tools:
+  0-setting-up-client-tools:
     name: Set up Client Tools
   41-verify-connectivity:
     name: Verify Connectivity
@@ -31,5 +31,9 @@ modules:
     name: Create an App using Container image
   43-exploring-the-cluster:
     name: Exploring the Cluster
+  48-build-container-image:
+    name: Build Container Image via Dockerfile on OCP 4
+  47-ocp4-as-developer:
+    name: OCP 4 as Developers
   46-using-operatorhub:
     name: Extensions to OpenShift using OperatorHub
