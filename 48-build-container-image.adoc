@@ -58,7 +58,8 @@ $ oc project buildimage-Username
 
 === Create an application that uses Dockerfile
 
-What you can build your container image locally via podman with steps as shown below.
+What you can build your container image locally via podman or docker CLI with
+similar steps as shown below.
 
 ```
 $ git clone https://github.com/flozanorht/testphp-ubi.git
@@ -76,7 +77,8 @@ $ sudo podman stop hello
 $ sudo podman rm hello
 ```
 
-We are going to build the container image on OpenShift and deploy it as an application.
+With OpenShift, we will be building the container image on OpenShift, deploy it
+as an application, and ready to be consume.
 
 - Download your service account from https://access.redhat.com/terms-based-registry/ as an OpenShift secret as shown in the previous section.
 - Save the secret yaml file to your local filesystem as my-service-account-pull-secret.yaml
@@ -124,7 +126,7 @@ through subscriptions for Red Hat products. This image is maintained by Red Hat
 
     * An image stream tag will be created as "ubi:latest" that will track the s
 ource image
-    * A Docker build using source code from https://github.com/flozanorht/testp
+    * A Docker build using source code from https://github.com/piggyvenus/testp
 hp-ubi.git will be created
       * The resulting image will be pushed to image stream tag "hello:latest"
       * Every time "ubi:latest" changes a new build will be triggered
@@ -151,7 +153,7 @@ h may not be permitted by your cluster administrator
 
 ```
 [~] $ oc logs -f bc/hello
-Cloning "https://github.com/flozanorht/testphp-ubi.git" ...
+Cloning "https://github.com/piggyvenus/testphp-ubi.git" ...
         Commit: c959400885894c66402f9578d24d1dcda77aedf1 (Fixed placeholder pro
 ject name in curl)
         Author: flozanorht <flozano@redhat.com>
