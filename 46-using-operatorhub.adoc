@@ -23,7 +23,7 @@ Before you get started, create a project for what you're about to do with Couchb
 
 ```
 $ oc new-project mycouchbase
-Now using project "mycouchbase" on server "https://api.cluster-3e5f.sandbox580.opentlc.com:6443"
+Now using project "mycouchbase" on server "{{API_URL}}"
 ```
 or create from console
 
