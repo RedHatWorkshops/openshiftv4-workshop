@@ -1,0 +1,50 @@
+[[deploy-a-java-application]]
+= Deploy a Java Application
+
+== Deploy a Java Application
+
+In this exercise we will deploy a Java application
+
+- Login to OpenShift Web Console via {{CONSOLE_ADDRESS}}
+- Click `my_htpasswd_provider`
+- Enter `Username` and `Password`
+- Navigate to `Developer Catalog`
+- Click onto `Red Hat OpenJDK 8`
+
+image::openjdk.png[image]
+
+- Click `Create Application`
+- Enter the following
+  * Name: petclinic
+  * Git repository: https://github.com/spring-projects/spring-petclinic
+  * check `Create route`
+
+image::deploy-java.png[image]
+
+- Click `Create`
+- Navigate `Builds` --> `Builds`
+- Click `petclinic-1`
+- Click `Logs`
+- Wait for the following from the log
+
+```
+Pushing image image-registry.openshift-image-registry.svc:5000/testme2/petclinic:latest ...
+Getting image source signatures
+Copying blob sha256:038b3dff993dc48f9a8b616ddb0e5a05bca1ab44787d8006ce82c5f2b2018e12
+Copying blob sha256:76608b6b9d54251299c5d3be69fdf53e05f97a3735bbcd5889c30ebb78608428
+Copying blob sha256:f4e561752acba40ba739e700e3b3277b8fe23eee951a5d2dfde7e7e762a3d156
+Copying blob sha256:3c81a5d20855a6cef8b997d709410e047e2839b5ad113f4c34d25e9fae9e3beb
+Copying config sha256:f2c1a1fb1c992cfa18d70a6276a5e90e67906b920979b7aeab0c22b64791274e
+Writing manifest to image destination
+Storing signatures
+Successfully pushed //image-registry.openshift-image-registry.svc:5000/testme2/petclinic:latest@sha256:49a1758bfc58cd4815a705575fc6e0cf271c264ae8327018e8a03412e44cc9c1
+Push successful
+```
+- Navigate to `Networking` --> `Routes`
+- Click on to `petclinic`
+- Click the link under `LOCATION`
+
+image::javaapp.png[image]
+
+Congratulations!! You are now running a Java application on
+OpenShift.
