@@ -30,7 +30,7 @@ image::create-project.png[image]
 - Let's lookup the jenkins template from the terminal and execute the following
 
 ```
-~] $ oc get templates -n openshift | grep jenkins
+[~] $ oc get templates -n openshift | grep jenkins
 jenkins-ephemeral                               Jenkins service, without persistent storage....
          7 (all set)       6
 jenkins-persistent                              Jenkins service, with persistent storage....
@@ -49,9 +49,9 @@ jenkins-persistent                              Jenkins service, with persistent
 
      WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.
 
-     A Jenkins service has been created in your project.  Log into Jenkins with your OpenShift account.  The tutorial at h
-ttps://github.com/openshift/origin/blob/master/examples/jenkins/README.md contains more information about using this templ
-ate.
+     A Jenkins service has been created in your project.  Log into Jenkins with your OpenShift account.
+     The tutorial at https://github.com/openshift/origin/blob/master/examples/jenkins/README.md contains
+     more information about using this template.
 
      * With parameters:
         * Jenkins Service Name=jenkins
