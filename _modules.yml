@@ -31,11 +31,9 @@ modules:
     name: Create an App using Container image
   43-exploring-the-cluster:
     name: Exploring the Cluster
-  48-build-container-image:
-    name: Build Container Image via Dockerfile on OCP 4
-  52-deploy-java-app:
-    name: Deploy a Java Application
-  51-cicd-short:
-    name: Create Pipeline
+  44-scaling-an-openshift4-cluster:
+    name: Scaling OpenShift4 Cluster
+  45-openshift-infrastructure-nodes:
+    name: Setting up OpenShift Infrastructure Nodes
   46-using-operatorhub:
     name: Extensions to OpenShift using OperatorHub
