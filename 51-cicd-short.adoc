@@ -27,18 +27,8 @@ image::create-project.png[image]
 
 === Deploy your CI/CD tool (Jenkins)
 
-
-- Let's lookup the jenkins template from the terminal and execute the following
-
-```
-[~] $ oc get templates -n openshift | grep jenkins
-jenkins-ephemeral                               Jenkins service, without persistent storage....
-         7 (all set)       6
-jenkins-persistent                              Jenkins service, with persistent storage....
-         9 (all set)       7
-```
-
 - Login to the cluster via {{API_URL}}
+
 ```
 [~] $ oc login {{API_URL}}
 The server uses a certificate signed by an unknown authority.
@@ -56,6 +46,16 @@ Login successful.
 
 ```
 [~] $ oc project pipline-user01
+```
+
+- Let's lookup the jenkins template from the terminal and execute the following
+
+```
+[~] $ oc get templates -n openshift | grep jenkins
+jenkins-ephemeral                               Jenkins service, without persistent storage....
+         7 (all set)       6
+jenkins-persistent                              Jenkins service, with persistent storage....
+         9 (all set)       7
 ```
 
 - Getting Jenkins up and Running
