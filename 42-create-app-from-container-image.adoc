@@ -22,12 +22,13 @@ image::create-project.png[image]
 
 === Deploy an Image
 
-- Click `Deploy Image`, or in the top-right, click the *Add* drop-down menu and select `Deploy Image`
+- Click `Deploy Image`, or in the top-right
+- Click the *Add* drop-down menu
+- Select `Deploy Image`
 - Enter `quay.io/openshiftlabs/workshop-terminal:2.4.0` in the `Image Name` box,
   noting that there's no `http://`, enter exactly as shown here,
-  without the quotes, and then select the magnifying glass to the right of the box,
-  this will show you more information about the image.
-- Click on search icon
+  without the quotes
+- Select the magnifying glass icon to the right of the box
 - Enter a Name for the deployment
 - Scroll down a bit and provide an environment variable.
 - Add `OC_VERSION` and `4.1` as `Environment Variable` section at the bottom on the page.
@@ -35,7 +36,7 @@ image::create-project.png[image]
 image::ocp4-deploy-image.png[image]
 
 - Click `Deploy`
-- On the left-hand side menu, select `Workload` and then select `Deployments Configs`
+- On the left-hand side menu, select `Workload` --> `Deployments Configs`
 - Click onto the `Deployment config`, you will see the deployment details here
 
 image::ocp4-dc.png[image]
@@ -44,15 +45,22 @@ image::ocp4-dc.png[image]
 
 image::ocp4-terminal.png[image]
 
-- On the left-hand side menu, select `Home` and then select `Events` to check status on each events. Events in OpenShift Container Platform are modeled based on events that happen to API objects in an OpenShift Container Platform cluster. Events allow OpenShift Container Platform to record information about real-world events in a resource-agnostic manner. For more information, please see https://docs.openshift.com/container-platform/3.11/security/monitoring.html#security-monitoring-events.
+- Navigate to `Home` --> `Events` to check status on each events.
+Events in OpenShift Container Platform are modeled based on events that happen
+to API objects in an OpenShift Container Platform cluster. Events allow OpenShift
+Container Platform to record information about real-world events in a resource-
+agnostic manner. For more information, please see
+https://docs.openshift.com/container-platform/3.11/security/monitoring.html#security-monitoring-events.
 
 == Create route
 
 Next we need to create a route so we can access this application from the outside of OpenShift (i.e. from the internet).
 
-- On the left-hand side menu, select `Networking` and then select `Routes`
+- Navigate to `Networking` --> `Routes`
 - Click `create route` in the top-left
-- Enter `workshop-terminal` for the name of the route, leave the hostname and path the default, select `workshop-terminal` from the list of services in the `Service` menu, and select the only port in the `Target Port` drop down (should be port 10080 --> 10080), like this:
+- Enter `workshop-terminal` for the name of the route, leave the hostname and path the default
+- Select `workshop-terminal` from the list of services in the `Service` menu
+- Select the only port in the `Target Port` drop down (should be port 10080 --> 10080), like this:
 
 image::ocp4-route.png[image]
 
@@ -64,8 +72,10 @@ image::ocp4-route-details.png[image]
 
 === Accessing the terminal
 
-- In the top right hand side of the route details page, you will see the `Location` which will be the routable URL that will provide access to our workshop terminal.
-- Click on this and you should now see the in-browser terminal session that we can use (if preferred, or mandated due to connectivity issues):
+- In the top right hand side of the route details page, you will see the `Location`
+which will be the routable URL that will provide access to our workshop terminal.
+- Click on the link under `LOCATION` and you will see the in-browser terminal
+session that we can use (if preferred, or mandated due to connectivity issues):
 
 image::run-oc-terminal.png[image]
 
