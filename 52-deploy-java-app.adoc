@@ -5,10 +5,23 @@
 
 In this exercise we will deploy a Java application
 
-- Login to OpenShift Web Console via {{CONSOLE_ADDRESS}}
+=== Create Project
+IMPORTANT: Please replace *Username* with your username
+
+- login to web UI via {{CONSOLE_ADDRESS}}
 - Click `my_htpasswd_provider`
-- Enter `Username` and `Password`
-- Navigate to `Developer Catalog`
+- Use the same username and password that assigned to you
+- On the left-hand side menu, select `Home` and then select `Project`
+- Click `Create Project`
+- Enter *web-terminal-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+- Click `Create`
+
+=== Developer Catalog
+
+- Navigate to `Catalog` --> `Developer Catalog`
 - Click onto `Red Hat OpenJDK 8`
 
 image::openjdk.png[image]
@@ -16,7 +29,7 @@ image::openjdk.png[image]
 - Click `Create Application`
 - Enter the following
   * Name: petclinic
-  * Git repository: https://github.com/spring-projects/spring-petclinic
+  * Git repository: https://github.com/spring-projects/spring-petclinic.git
   * check `Create route`
 
 image::deploy-java.png[image]

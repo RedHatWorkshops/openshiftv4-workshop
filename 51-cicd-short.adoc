@@ -39,7 +39,7 @@ jenkins-persistent                              Jenkins service, with persistent
 
 - Getting Jenkins up and Running
 
-'''
+```
 [~] $ oc new-app jenkins-ephemeral
 --> Deploying template "openshift/jenkins-ephemeral" to project testme2
 
@@ -72,7 +72,7 @@ ate.
 --> Success
     Access your application via route 'jenkins-testme2.apps.cluster-4c7b.sandbox575.opentlc.com'
     Run 'oc status' to view your app.
-'''
+```
 
 - Login to web console
 - Navigate to `Projects`
@@ -100,6 +100,11 @@ image::jenkins.png[image]
 [~] $ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline
 .yaml
 buildconfig.build.openshift.io/nodejs-sample-pipeline created
+```
+
+- Grant permissions to jenkins sevice account for access to the project.
+
+```
 [~] $ oc adm policy add-role-to-user admin system:serviceaccount:pipeline-Username:jenkins -n pipeline-Username
 clusterrole.rbac.authorization.k8s.io/admin added: "system:serviceaccount:pipeline-Username:jenkins"
 ```
@@ -131,7 +136,7 @@ image::pipeline-build.png[image]
 - Navigate `Network` --> `Route`
 - Click onto the link under `LOCATION` for `nodejs-mongodb-example`
 
-image::pipeline-result.png[image] 
+image::pipeline-result.png[image]
 
 Congratulations!! In this lab, you have learnt how to set up and run
 your own CI/CD pipeline on OpenShift.
