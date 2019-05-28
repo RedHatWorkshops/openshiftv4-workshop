@@ -29,19 +29,19 @@ image::create-project.png[image]
 
 - Let's lookup the jenkins template from the terminal and execute the following
 
-'''
+```
 ~] $ oc get templates -n openshift | grep jenkins
 jenkins-ephemeral                               Jenkins service, without persistent storage....
          7 (all set)       6
 jenkins-persistent                              Jenkins service, with persistent storage....
          9 (all set)       7
-'''
+```
 
 - Getting Jenkins up and Running
 
 ```
 [~] $ oc new-app jenkins-ephemeral
---> Deploying template "openshift/jenkins-ephemeral" to project testme2
+ -> Deploying template "openshift/jenkins-ephemeral" to project testme2
 
      Jenkins (Ephemeral)
      ---------
@@ -62,14 +62,14 @@ ate.
         * Disable memory intensive administrative monitors=false
         * Jenkins ImageStreamTag=jenkins:2
 
---> Creating resources ...
+ -> Creating resources ...
     route.route.openshift.io "jenkins" created
     deploymentconfig.apps.openshift.io "jenkins" created
     serviceaccount "jenkins" created
     rolebinding.authorization.openshift.io "jenkins_edit" created
     service "jenkins-jnlp" created
     service "jenkins" created
---> Success
+ -> Success
     Access your application via route 'jenkins-testme2.apps.cluster-4c7b.sandbox575.opentlc.com'
     Run 'oc status' to view your app.
 ```
