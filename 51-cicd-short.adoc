@@ -27,6 +27,7 @@ image::create-project.png[image]
 
 === Deploy your CI/CD tool (Jenkins)
 
+
 - Let's lookup the jenkins template from the terminal and execute the following
 
 ```
@@ -35,6 +36,26 @@ jenkins-ephemeral                               Jenkins service, without persist
          7 (all set)       6
 jenkins-persistent                              Jenkins service, with persistent storage....
          9 (all set)       7
+```
+
+- Login to the cluster via {{API_URL}}
+```
+[~] $ oc login {{API_URL}}
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted
+by others.
+Use insecure connections? (y/n): y
+
+Authentication required for https://api.cluster-d724.sandbox182.opentlc.com:6443 (openshift)
+Username: admin01
+Password:
+Login successful.
+```
+
+- Make sure you switch project to your `pipeline-Username` project
+
+```
+[~] $ oc project pipline-user01
 ```
 
 - Getting Jenkins up and Running
@@ -74,13 +95,11 @@ jenkins-persistent                              Jenkins service, with persistent
     Run 'oc status' to view your app.
 ```
 
-- Login to web console
-- Navigate to `Projects`
-- Click on the newly created project
-- Navigate to `Networking` -> `Routes`
+- Back to web console {{CONSOLE_ADDRESS}}
+- Navigate to `Networking` --> `Routes`
 - Click the link under `LOCATION`
 - Click `Advanced`
-- Click `Proceed to jenkins-...`
+- Click the link where `Proceed to jenkins-...`
 - Click `Log in with OpenShift`
 
 image::jenkins-login.png[image]
@@ -94,11 +113,10 @@ image::jenkins.png[image]
 
 === Pipeline setup
 
-- Create pipeline
+- Create pipeline via web termainal
 
 ```
-[~] $ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline
-.yaml
+[~]$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
 buildconfig.build.openshift.io/nodejs-sample-pipeline created
 ```
 
@@ -111,7 +129,7 @@ clusterrole.rbac.authorization.k8s.io/admin added: "system:serviceaccount:pipeli
 
 NOTE: *pipeline-Username* will be replaced to your project name
 
-- Go back to your web console
+- Go back to your web console {{CONSOLE_ADDRESS}}
 - Navigate to `Build` --> `Build Configs`
 - Click onto `nodejs-sample-pipeline`
 - Click `Actions` dropdown on the top right
@@ -125,7 +143,7 @@ image::jenkins-viewlog.png[image]
 
 image::jenkins-build.png[image]
 
-- Blue Ocean console here:
+- Blue Ocean console here (may take a minute to show up):
 
 image::blue-ocean.png[image]
 
@@ -133,7 +151,7 @@ image::blue-ocean.png[image]
 
 image::pipeline-build.png[image]
 
-- Navigate `Network` --> `Route`
+- When Pipleline build is completed, navigate `Network` --> `Route`
 - Click onto the link under `LOCATION` for `nodejs-mongodb-example`
 
 image::pipeline-result.png[image]

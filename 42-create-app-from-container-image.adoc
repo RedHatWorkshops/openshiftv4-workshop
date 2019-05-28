@@ -37,7 +37,7 @@ image::ocp4-deploy-image.png[image]
 
 - Click `Deploy`
 - On the left-hand side menu, select `Workload` --> `Deployments Configs`
-- Click onto the `Deployment config`, you will see the deployment details here
+- See the deployment details here
 
 image::ocp4-dc.png[image]
 
@@ -46,6 +46,7 @@ image::ocp4-dc.png[image]
 image::ocp4-terminal.png[image]
 
 - Navigate to `Home` --> `Events` to check status on each events.
+
 Events in OpenShift Container Platform are modeled based on events that happen
 to API objects in an OpenShift Container Platform cluster. Events allow OpenShift
 Container Platform to record information about real-world events in a resource-
