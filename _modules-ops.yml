@@ -37,3 +37,5 @@ modules:
     name: Setting up OpenShift Infrastructure Nodes
   46-using-operatorhub:
     name: Extensions to OpenShift using OperatorHub
+  53-managing-users-overview:
+    name: Managing Users Overview
