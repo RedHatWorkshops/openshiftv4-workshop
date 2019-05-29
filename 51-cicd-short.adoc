@@ -30,7 +30,7 @@ image::create-project.png[image]
 - Login to the cluster via {{API_URL}}
 
 ```
-[~] $ oc login {{API_URL}}
+[~]$ oc login {{API_URL}}
 The server uses a certificate signed by an unknown authority.
 You can bypass the certificate check, but any data you send to the server could be intercepted
 by others.
@@ -45,13 +45,14 @@ Login successful.
 - Make sure you switch project to your `pipeline-Username` project
 
 ```
-[~] $ oc project pipline-user01
+[~]$ oc project pipline-user01
+
 ```
 
 - Let's lookup the jenkins template from the terminal and execute the following
 
 ```
-[~] $ oc get templates -n openshift | grep jenkins
+[~]$ oc get templates -n openshift | grep jenkins
 jenkins-ephemeral                               Jenkins service, without persistent storage....
          7 (all set)       6
 jenkins-persistent                              Jenkins service, with persistent storage....
@@ -61,7 +62,7 @@ jenkins-persistent                              Jenkins service, with persistent
 - Getting Jenkins up and Running
 
 ```
-[~] $ oc new-app jenkins-ephemeral
+[~]$ oc new-app jenkins-ephemeral
  -> Deploying template "openshift/jenkins-ephemeral" to project testme2
 
      Jenkins (Ephemeral)
@@ -117,6 +118,7 @@ image::jenkins.png[image]
 
 ```
 [~]$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
+
 buildconfig.build.openshift.io/nodejs-sample-pipeline created
 ```
 

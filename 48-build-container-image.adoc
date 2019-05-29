@@ -53,7 +53,7 @@ image::create-project.png[image]
 
 - Alternatively, you can run this command below via CLI.
 ....
-$ oc project buildimage-Username
+$ oc new-project buildimage-Username
 ....
 
 === Create an application that uses Dockerfile
@@ -61,7 +61,7 @@ $ oc project buildimage-Username
 What you can build your container image locally via podman or docker CLI with
 similar steps as shown below.
 
-```
+....
 $ git clone https://github.com/flozanorht/testphp-ubi.git
 $ cd testphp
 $ sudo podman login -u <your service account name> -p <your service account token>
@@ -75,7 +75,7 @@ Hello world!
 </html>
 $ sudo podman stop hello
 $ sudo podman rm hello
-```
+....
 
 With OpenShift, we will be building the container image on OpenShift, deploy it
 as an application, and ready to be consume.
@@ -88,28 +88,29 @@ as an application, and ready to be consume.
 NOTE: If you are using the web termainal, you will have to create a file with the
 same content of the secret file in your web terminal.
 
-```
+....
 $ oc project buildimage-Username
 $ oc create -f my-service-account-pull-secret.yaml
-```
+....
 
 - Links that secret to your project's builder service account. Your secret name may be different from the one listed.
 
-```
+....
 [~] $ oc get secrets
 NAME                              TYPE                                  DATA
 AGE
 12182981-shannachan-pull-secret   kubernetes.io/dockerconfigjson        1
-...
+
 
 [~] $ oc secrets link builder 12182981-shannachan-pull-secret
-```
+....
+
 NOTE: Make sure your secret name matches the command to link to the service account.
 
 
 - Create an application via the Dockerfile
 
-```
+....
 [~] $ oc new-app --name hello https://github.com/piggyvenus/testphp-ubi.git
 --> Found Docker image c096c0d (5 weeks old) from registry.redhat.io for "regis
 try.redhat.io/ubi7/ubi"
@@ -148,10 +149,11 @@ h may not be permitted by your cluster administrator
  executing one or more of the commands below:
      'oc expose svc/hello'
     Run 'oc status' to view your app.
-```
+....
+
 - Wait for the build to finish
 
-```
+....
 [~] $ oc logs -f bc/hello
 Cloning "https://github.com/piggyvenus/testphp-ubi.git" ...
         Commit: c959400885894c66402f9578d24d1dcda77aedf1 (Fixed placeholder pro
@@ -166,35 +168,35 @@ Pulling image registry.redhat.io/ubi7/ubi@sha256:d4c6c9f36f1050365b1c488893eb16
 Getting image source signatures
 Copying blob sha256:99f178453a43da0ebc09f2ca0744a3ef4aa20efaa137bce8d15c87577c2
 96c75
-...
+
 Writing manifest to image destination
 Storing signatures
 Successfully pushed //image-registry.openshift-image-registry.svc:5000/testdock
 er/hello:latest@sha256:787cb6df4932b89dd6f891c9fdd342ca1a2cc7bce4c52ca3c9089ec9
 0c863b83
 Push successful
-```
+....
 
 - Wait for the application pod to be ready and Running
 
-```
+....
 [~] $ oc get pods
 NAME             READY   STATUS      RESTARTS   AGE
 hello-1-8mf6f    1/1     Running     0          34s
 hello-1-build    0/1     Completed   0          2m2s
 hello-1-deploy   0/1     Completed   0          43s
-```
+....
 
 - Create a route for the application's service
 
-```
+....
 [~] $ oc expose svc hello
 route.route.openshift.io/hello exposed
-```
+....
 
 - Test the application using route
 
-```
+....
 [~] $ oc get route
 NAME    HOST/PORT                                                   PATH   SERV
 ICES   PORT       TERMINATION   WILDCARD
@@ -206,7 +208,7 @@ o      8080-tcp                 None
 Hello, world!
 </body>
 </html>
-```
+....
 
 
 Congratulations!! In this exercise you have learnt how to create, build

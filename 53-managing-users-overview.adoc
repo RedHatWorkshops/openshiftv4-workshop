@@ -57,6 +57,13 @@ $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/ma
 
 NOTE: 3 users will be created using this file. They are devday01, devday02, and devday03. Password as *openshift4*
 
+- Rename the file
+
+....
+$ mv htpasswd-dd htppass-dd-NN
+....
+
+NOTES: NN is assigned number
 
 
 === Create htpasswd secret
@@ -65,12 +72,14 @@ The authentication operator will read the htpasswd file from a secret in the
 openshift-config project. Go ahead and create that secret using the following command:
 
 ....
-$ oc create secret generic htpass-dd-secret --from-file=htpasswd=htpasswd-dd -n openshift-config
+$ oc create secret generic htpass-dd-NN-secret --from-file=htpasswd=htpasswd-dd-NN -n openshift-config
 ....
 
-NOTE: The above command assumes that htpasswd-dd is the filename that you're
+NOTE: The above command assumes that htpasswd-dd-NN is the filename that you're
 wanting to use, and is in your current working directory. If it's not, you will
 need to specify the full location.
+
+NOTES: NN is assigned number
 
 === Create the Identities Provider Custom Resource
 
@@ -78,7 +87,7 @@ The operator that configures authentication is looking for a CustomResource obje
 In our case, we want one that tells it to configure htpasswd authentication using
 the provided secret. Here's what that definition looks like:
 
-- Save this file as htpasswd-dd-cr.yaml
+- Save this file as htpasswd-dd-NN-cr.yaml
 
 ....
 apiVersion: config.openshift.io/v1
@@ -87,34 +96,40 @@ metadata:
   name: cluster
 spec:
   identityProviders:
-  - name: dd_htpasswd_provider
+  - name: dd_NN_htpasswd_provider
     challenge: true
     login: true
     mappingMethod: claim
     type: HTPasswd
     htpasswd:
       fileData:
-        name: htpass-dd-secret
+        name: htpass-dd-NN-secret
 ....
+
+NOTES: NN is assigned number
 
 - Create the Custom Resource for auth with the command here:
 
 ....
-oc apply -f htpasswd-dd-cr.yaml
+$ oc apply -f htpasswd-dd-NN-cr.yaml
 ....
+
+NOTES: NN is assigned number
 
 === Test Authentication
 
+- Login via web terminal
+
 ....
-oc login -u devday01 -p openshift4
+$ oc login -u devday01 -p openshift4
 ....
 
 - Now check OpenShift. Note that the user you just created is not there.
 
 ....
-oc get users
+$ oc get users
 NAME       UID                                    FULL NAME       IDENTITIES
-dmin       9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
+admin      9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
 devday01   8423f1bc-81e0-11e9-95da-0a580a810022                   dd_htpasswd_provider:devday01
 ....
 
@@ -122,16 +137,16 @@ When deleted a user from the backend authentication
 system. Just simply delete the user
 
 ....
-oc delete user devday01
+$ oc delete user devday01
 user "devday01" deleted
 ....
 
 You should now see the user gone from the list
 
 ....
-oc get users
+$ oc get users
 NAME      UID                                    FULL NAME       IDENTITIES
-dmin      9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
+admin     9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
 ....
 
 *Re-Using the User* If you want to re-use this user with a later lab
@@ -139,8 +154,10 @@ module, you will also need to run the following to finish cleaning up
 the user from the backend:
 
 ....
-oc delete identity htpasswd_auth:devday01
+$ oc delete identity dd_htpasswd_provider:devday01
 ....
+
+NOTES: the name of identity is from the output of `oc get users`
 
 *CLEANUP:* If this user was an admin/owner of any projects; those
 projects would still exist. You just need to assign them to different

@@ -1,0 +1,241 @@
+= Scale up and Scale down and Idle the application instances
+
+== Scale up and Scale down and Idle the application instances
+
+In this exercise we will learn how to scale our application. OpenShift
+has the capability to scale your application and make sure that many
+instances are always running.
+
+=== Switch to an existing project
+
+IMPORTANT: Please replace *Username* with the username assigned to you in
+the commands below.
+
+For this exercise, we will be using an already running application. We
+will be using the `buildimage-Username` that you created in the
+previous labs. Make sure you are switched to that project by using the
+`oc project` command.
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- Navigate to `Projects`
+- Click onto the `buildimage-Username`
+
+
+=== View the deployment config
+
+Take a look at the `deploymentConfig` (or `dc`) of the `time`
+application
+
+- Navigate to `Workloads` --> Deployment Configs
+- Click onto `hello` the name of the dc
+- Click `YAML` tab
+
+....
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  selfLink: >-
+    /apis/apps.openshift.io/v1/namespaces/buildimage-user01/deploymentconfigs/hello
+  resourceVersion: '260459'
+  name: hello
+  uid: b3533c38-81e7-11e9-93c7-0a580a820019
+  creationTimestamp: '2019-05-29T07:59:35Z'
+  generation: 2
+  namespace: buildimage-user01
+  labels:
+    app: hello
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - hello
+        from:
+          kind: ImageStreamTag
+          namespace: buildimage-user01
+          name: 'hello:latest'
+        lastTriggeredImage: >-
+          image-registry.openshift-image-registry.svc:5000/buildimage-user01/hello@sha256:21ff2dd47fd6ac3e351e69ef4d052fa9008c7ff655eb6f256e6efbb634cbe718
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: hello
+    deploymentconfig: hello
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hello
+        deploymentconfig: hello
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+    spec:
+      containers:
+        - name: hello
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/buildimage-user01/hello@sha256:21ff2dd47fd6ac3e351e69ef4d052fa9008c7ff655eb6f256e6efbb634cbe718
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+status:
+  observedGeneration: 2
+  details:
+    message: config change
+    causes:
+      - type: ConfigChange
+  availableReplicas: 1
+  unavailableReplicas: 0
+  latestVersion: 1
+  updatedReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2019-05-29T08:01:05Z'
+      lastTransitionTime: '2019-05-29T08:01:05Z'
+      message: Deployment config has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2019-05-29T08:01:05Z'
+      lastTransitionTime: '2019-05-29T08:01:05Z'
+      reason: NewReplicationControllerAvailable
+      message: replication controller "hello-1" successfully rolled out
+  replicas: 1
+  readyReplicas: 1
+....
+
+Note that the `replicas:` is set to `1`. This tells OpenShift that when
+this application deploys, make sure that there is 1 instance.
+
+The `Replication Controller` mirrors this configuration initially; the
+`Replication Controller` (or `rc`) will ensure that there is always the
+set number of instances always running.
+
+To view the `rc` for your application first get the current pod running.
+
+- Navigate to `Workloads` --> `Pods`
+- Let us view the `rc` on this build.
+- Navigate to `Workloads` --> `Replication Controllers`
+
+NOTE: You can change the number of replicas in `DeploymentConfig` or
+the `ReplicationController`.
+
+However note that if you change the `deploymentConfig` it applies to
+your application. This means, even if you delete the current replication
+controller, the new one that gets created will be assigned the REPLICAS
+value based on what is set for DC. If you change it on the Replication
+Controller, the application will scale up. But if you happen to delete
+the current replication controller for some reason, you will loose that
+setting.
+
+=== Scale Application
+
+To scale your application we will edit the `deploymentConfig` to 3.
+
+- Navigate to `Workloads` --> `Deployment Configs`
+- Click onto `hello` DC
+
+image::scale-overview.png[image]
+
+- Click the `pencil` icon under `DESIRED COUNT`
+
+image::scale-up.png[image]
+
+- Click `+` to increase to `3`
+- Click `Save`
+
+image::scale-3pods-overview.png[image]
+
+- Wait for all 3 pods are available
+- Click `Pods`
+- you will see that there are 3 pods running now
+
+image::scale-3pods.png[image]
+
+NOTES: You can also scale up and down from updating the deployment config.
+
+
+=== Idling the application
+
+Run the following command to find the available endpoints
+
+....
+[~] $ oc get endpoints
+NAME    ENDPOINTS                                            AGE
+hello   10.128.2.30:8080,10.129.2.47:8080,10.131.0.33:8080   23m
+....
+
+Note that the name of the endpoints is `hello` and there are three ips
+addresses for the three pods.
+
+Run the `oc idle endpoints/hello` command to idle the application
+
+....
+[~] $ oc idle endpoints/hello
+WARNING: idling when network policies are in place may cause connections to bypass network policy entirely
+The service "buildimage-user01/hello" has been marked as idled
+The service will unidle DeploymentConfig "buildimage-user01/hello" to 3 replicas once it receives traffic
+DeploymentConfig "buildimage-user01/hello" has been idled
+....
+
+- Go back to the webconsole. You will notice that the pods show up as
+idled.
+- Navigate to `Workloads` --> `Pods`
+
+image::idle-pod.png[image]
+
+At this point the application is idled, the pods are not running and no
+resources are being used by the application. This doesn't mean that the
+application is deleted. The current state is just saved that's all.
+
+=== Reactivate your application
+
+- Navigate to `Networking` --> `Routes`
+- Now click on the application route URL under `LOCATION`
+
+Note that it takes a little while for the application to respond. This
+is because pods are spinning up again. You can notice that in the web
+console.
+
+In a little while the output comes up and your application would be up
+with 3 pods.
+
+So, as soon as the user accesses the application, it comes up!!!
+
+=== Scaling Down
+
+Scaling down is the same procedure as scaling up.
+
+- Navigate to `Workloads` --> `Deployment Configs`
+- Click on to the DC `hello`
+- Click `pencil` icon under `DESIRED COUNT`
+- Click `-` twice and down to 1
+- Click `Save`
+- Now, you only have 1 pod running
+
+Congratulations!! In this exercise you have learned about scaling and
+how to scale up/down your application on OpenShift!
