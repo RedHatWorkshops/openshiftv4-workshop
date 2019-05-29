@@ -1,0 +1,172 @@
+= Managing Users Overview
+
+== Managing Users Overview
+
+In this lab you will learn how OpenShift manages users and how
+authentication is handled. You will also learn how to add/delete users
+from the OpenShift platform.
+
+=== Out of the Box
+
+OpenShift 4 installs with two effective superusers out of the box:
+
+- kubeadmin (technically an alias for kube:admin)
+- system:admin
+
+Why two? Because system:admin is a user that uses a certificate to login and has
+no password. Therefore this superuser cannot log-in to the web console (which
+requires a password).
+
+=== Create the htpasswd file
+
+OpenShift takes "hands off" approach in managing users. That is,
+OpenShift does not manage users directly. Instead it "offloads" the
+user administration to whatever mechanism you choose.
+
+Currently supported authentication methods are:
+
+* LDAP
+* HTPassword File
+* Github
+* Gitlab
+* OpenID
+* Google
+* Request Header
+* Basic authentication
+* Keystone
+
+More information can be found
+https://docs.openshift.com/container-platform/4.1/authentication/understanding-identity-provider.html#supported-identity-providers
+
+In this example, we are going to setup `htpasswd` which is a "flat file" for
+authentication.
+
+- Create the file manually, run the below command in the web terminal.
+
+```
+$ printf "devday01:$(openssl passwd -apr1 openshift4)\n" >> ~/htpasswd-dev-day"
+```
+
+This will create a user called devday01 with password `openshift4`.
+
+=== Create htpasswd secret
+
+The authentication operator will read the htpasswd file from a secret in the
+openshift-config project. Go ahead and create that secret using the following command:
+
+```
+$ oc create secret generic htpass-dd-secret --from-file=htpasswd=htpasswd-dev-day -n openshift-config
+```
+
+NOTE: The above command assumes that htpasswd-dev-day is the filename that you're
+wanting to use, and is in your current working directory. If it's not, you will
+need to specify the full location.
+
+=== Create the Identities Provider Custom Resource
+
+The operator that configures authentication is looking for a CustomResource object.
+In our case, we want one that tells it to configure htpasswd authentication using
+the provided secret. Here's what that definition looks like:
+
+- Save this file as htpasswd-dd-cr.yaml
+
+```
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+  - name: dd_htpasswd_provider
+    challenge: true
+    login: true
+    mappingMethod: claim
+    type: HTPasswd
+    htpasswd:
+      fileData:
+        name: htpass-dd-secret
+```
+
+- Create the Custom Resource for auth with the command here:
+
+```
+oc apply -f htpasswd-dd-cr.yaml
+```
+
+=== Test Authentication
+
+```
+oc login -u devday01 -p openshift4
+```
+
+- Now check OpenShift. Note that the user you just created is not there.
+
+....
+oc get users
+NAME      UID                                    FULL NAME       IDENTITIES
+demo      72455092-6dad-11e7-b505-5254005e6599                   Local Authentication:demo
+....
+
+Using the webui or the `oc` command; login using this new user.
+
+NOTE: Do this from your web terminal.
+
+Example
+
+....
+oc login -u user1
+Authentication required for https://master.example.com:8443 (openshift)
+Username: user1
+Password:
+Login successful.
+
+You dont have any projects. You can try to create a new project, by running
+
+    oc new-project <projectname>
+
+oc whoami
+user1
+....
+
+Now take a look at your users
+
+....
+oc get users
+NAME      UID                                    FULL NAME       IDENTITIES
+demo      72455092-6dad-11e7-b505-5254005e6599                   Local Authentication:demo
+user1     b40b2c5f-6e47-11e7-b505-5254005e6599                   Local Authentication:user1
+....
+
+When deleted a user from the backend authentication
+system. Just simply delete the user
+
+....
+oc delete user user1
+user "user1" deleted
+....
+
+You should now see the user gone from the list
+
+....
+oc get users
+NAME      UID                                    FULL NAME       IDENTITIES
+demo      72455092-6dad-11e7-b505-5254005e6599                   Local Authentication:demo
+....
+
+*Re-Using the User* If you want to re-use this user with a later lab
+module, you will also need to run the following to finish cleaning up
+the user from the backend:
+
+....
+oc delete identity htpasswd_auth:user1
+....
+
+*CLEANUP:* If this user was an admin/owner of any projects; those
+projects would still exist. You just need to assign them to different
+users.
+
+=== Conclusion
+
+In this lab you learned how users are managed inside of OpenShift. You
+also go familiar with authentication and how that is handled in
+OpenShift
