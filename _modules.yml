@@ -33,7 +33,7 @@ modules:
     name: Exploring the Cluster
   48-build-container-image:
     name: Build Container Image via Dockerfile on OCP 4
-  53-scaling-app-instances:
+  54-scaling-app-instances:
     name: Scaling Application Instances
   52-deploy-java-app:
     name: Deploy a Java Application
