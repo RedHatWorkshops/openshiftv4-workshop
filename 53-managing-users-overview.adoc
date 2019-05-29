@@ -41,24 +41,34 @@ https://docs.openshift.com/container-platform/4.1/authentication/understanding-i
 In this example, we are going to setup `htpasswd` which is a "flat file" for
 authentication.
 
-- Create the file manually, run the below command in the web terminal.
+- Create the file manually, run the below command where you get access to openssl.
 
-```
-$ printf "devday01:$(openssl passwd -apr1 openshift4)\n" >> ~/htpasswd-dev-day"
-```
+....
+$ printf "devday01:$(openssl passwd -apr1 openshift4)\n" >> ~/htpasswd-dd"
+....
 
 This will create a user called devday01 with password `openshift4`.
+
+- Alternatively, if you don't want to create a file
+
+....
+$ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/master/solutions/htpasswd-dd
+....
+
+NOTE: 3 users will be created using this file. They are devday01, devday02, and devday03. Password as *openshift4*
+
+
 
 === Create htpasswd secret
 
 The authentication operator will read the htpasswd file from a secret in the
 openshift-config project. Go ahead and create that secret using the following command:
 
-```
-$ oc create secret generic htpass-dd-secret --from-file=htpasswd=htpasswd-dev-day -n openshift-config
-```
+....
+$ oc create secret generic htpass-dd-secret --from-file=htpasswd=htpasswd-dd -n openshift-config
+....
 
-NOTE: The above command assumes that htpasswd-dev-day is the filename that you're
+NOTE: The above command assumes that htpasswd-dd is the filename that you're
 wanting to use, and is in your current working directory. If it's not, you will
 need to specify the full location.
 
@@ -70,7 +80,7 @@ the provided secret. Here's what that definition looks like:
 
 - Save this file as htpasswd-dd-cr.yaml
 
-```
+....
 apiVersion: config.openshift.io/v1
 kind: OAuth
 metadata:
@@ -85,64 +95,35 @@ spec:
     htpasswd:
       fileData:
         name: htpass-dd-secret
-```
+....
 
 - Create the Custom Resource for auth with the command here:
 
-```
+....
 oc apply -f htpasswd-dd-cr.yaml
-```
+....
 
 === Test Authentication
 
-```
+....
 oc login -u devday01 -p openshift4
-```
+....
 
 - Now check OpenShift. Note that the user you just created is not there.
 
 ....
 oc get users
-NAME      UID                                    FULL NAME       IDENTITIES
-demo      72455092-6dad-11e7-b505-5254005e6599                   Local Authentication:demo
-....
-
-Using the webui or the `oc` command; login using this new user.
-
-NOTE: Do this from your web terminal.
-
-Example
-
-....
-oc login -u user1
-Authentication required for https://master.example.com:8443 (openshift)
-Username: user1
-Password:
-Login successful.
-
-You dont have any projects. You can try to create a new project, by running
-
-    oc new-project <projectname>
-
-oc whoami
-user1
-....
-
-Now take a look at your users
-
-....
-oc get users
-NAME      UID                                    FULL NAME       IDENTITIES
-demo      72455092-6dad-11e7-b505-5254005e6599                   Local Authentication:demo
-user1     b40b2c5f-6e47-11e7-b505-5254005e6599                   Local Authentication:user1
+NAME       UID                                    FULL NAME       IDENTITIES
+dmin       9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
+devday01   8423f1bc-81e0-11e9-95da-0a580a810022                   dd_htpasswd_provider:devday01
 ....
 
 When deleted a user from the backend authentication
 system. Just simply delete the user
 
 ....
-oc delete user user1
-user "user1" deleted
+oc delete user devday01
+user "devday01" deleted
 ....
 
 You should now see the user gone from the list
@@ -150,7 +131,7 @@ You should now see the user gone from the list
 ....
 oc get users
 NAME      UID                                    FULL NAME       IDENTITIES
-demo      72455092-6dad-11e7-b505-5254005e6599                   Local Authentication:demo
+dmin      9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
 ....
 
 *Re-Using the User* If you want to re-use this user with a later lab
@@ -158,7 +139,7 @@ module, you will also need to run the following to finish cleaning up
 the user from the backend:
 
 ....
-oc delete identity htpasswd_auth:user1
+oc delete identity htpasswd_auth:devday01
 ....
 
 *CLEANUP:* If this user was an admin/owner of any projects; those
