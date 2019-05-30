@@ -86,8 +86,8 @@ image::run-oc-terminal.png[image]
 - Execute the following in the terminal:
 
 ....
-$ wget {{CLI_URL}}
-$ tar zvxf openshift-client-linux-4.1.0-rc.5.tar.gz
+$ wget {{LINUX_CLI_URL}}
+$ tar zvxf openshift-client-linux-4.1.0-rc.7.tar.gz
 $ mv oc /opt/app-root/bin/
 $ oc version
 ....

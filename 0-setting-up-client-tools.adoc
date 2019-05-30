@@ -32,17 +32,17 @@ to the environment variable called `PATH` from the OS.
 *1. OSX and Linux:*
 
 ** OSX
-https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.5/openshift-client-mac-4.1.0-rc.5.tar.gz
+{{MAC_CLI_URL}}
 
 ** Linux
-https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.5/openshift-client-linux-4.1.0-rc.5.tar.gz
+{{LINUX_CLI_URL}}
 
 Copy the binary to the `/usr/local/bin` directory, or one of the
 paths listed in the `PATH` environment variable.
 
 *2. Windows:*
 
-** https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.5/openshift-client-windows-4.1.0-rc.5.zip
+** https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.7/openshift-client-windows-4.1.0-rc.7.zip
 
 ** Use `oc.exe` to open an OpenShift shell. If you getting error from
 running oc, go to http://git-scm.com to download git bash for Windows (during

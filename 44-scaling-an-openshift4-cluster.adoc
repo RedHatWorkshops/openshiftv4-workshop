@@ -358,7 +358,7 @@ Now using project "autoscale-example" on server "{{API_URL}}".
 - Click `Advance` when you see the SSL certificate error.
 - Click `Process to ...` link
 - Click `Log in with OpenShift`
-- Click `my_htpasswd_provider`
+- Click `htpasswd`
 - Enter your provided admin username and password and click login
 - CLick `Allow selected permissions`
 - you will see the Grafana homepage.

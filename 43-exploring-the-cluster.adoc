@@ -12,9 +12,9 @@ Currently using the OC client CLI from https://mirror.openshift.com/pub/openshif
 
 
 ....
-[~] $ wget {{CLI_URL}}
+[~] $ wget {{LINUX_CLI_URL}}
 (...)
-[~] $ tar -zxvf openshift-client-linux-4.1.0-rc.5.tar.gz
+[~] $ tar -zxvf openshift-client-linux-4.1.0-rc.7.tar.gz
 oc
 
 [~] $ export PATH=$PATH:$(pwd)
@@ -28,9 +28,9 @@ e:"2019-05-18T00:35:43Z", GoVersion:"go1.11.5", Compiler:"gc", Platform:"linux/a
 ==== For MacOS:
 
 ....
-[~] $ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac-4.1.0-rc.5.tar.gz
+[~] $ wget {{MAC_CLI_URL}}
 (...)
-[~] $ tar zxvf openshift-client-mac-4.1.0-rc.5.tar.gz
+[~] $ tar zxvf openshift-client-mac-4.1.0-rc.7.tar.gz
 x oc
 
 [~] $ export PATH=$PATH:$(pwd)

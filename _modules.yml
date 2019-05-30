@@ -15,9 +15,12 @@ config:
     - name: API_URL
       desc: URL to API server
       value: https://api.cluster-68a6.sandbox132.opentlc.com:6443
-    - name: CLI_URL
+    - name: LINUX_CLI_URL
       desc: URL to download CLI
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.7/openshift-client-linux-4.1.0-rc.7.tar.gz
+    - name: MAC_CLI_URL
+      desc: URL to download CLI
+      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.7/openshift-client-mac-4.1.0-rc.7.tar.gz
     - name: NEXUS_URL
       desc: URL to Nexus repository
       value: http://nexus-workshop.apps
