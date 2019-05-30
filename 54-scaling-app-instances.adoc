@@ -157,7 +157,7 @@ setting.
 To scale your application we will edit the `deploymentConfig` to 3.
 
 - Navigate to `Workloads` --> `Deployment Configs`
-- Click onto `hello` DC
+- Click onto `hello` Deployment Configs
 
 image::scale-overview.png[image]
 

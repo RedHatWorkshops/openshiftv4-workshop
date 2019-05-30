@@ -9,7 +9,7 @@ In this exercise we will deploy a Java application
 IMPORTANT: Please replace *Username* with your username
 
 - login to web UI via {{CONSOLE_ADDRESS}}
-- Click `my_htpasswd_provider`
+- Click `htpasswd`
 - Use the same username and password that assigned to you
 - On the left-hand side menu, select `Home` and then select `Project`
 - Click `Create Project`

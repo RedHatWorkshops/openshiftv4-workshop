@@ -105,7 +105,7 @@ jenkins-persistent                              Jenkins service, with persistent
 
 image::jenkins-login.png[image]
 
-- Click `my_htpasswd_provider`
+- Click `htpasswd`
 - Login using your user name
 - Click `Allow selected permissions`
 - You now login the Jenkins console

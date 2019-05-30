@@ -7,7 +7,7 @@ Next, let's login to the web-console and ensure that it's working as expected.
 
 - Console URL: {{CONSOLE_ADDRESS}}
 - Click Advance and Click proceed link on the browser, you should be presented with the page to select the authentication providers.
-- Click `my_htpasswd_provider`
+- Click `htpasswd`
 
 image::login-providers.png[image]
 
@@ -18,5 +18,7 @@ image::ocp4-login.png[image]
 - Proceed to login with the username and password that were provided to you and you should hit the OpenShift console home page:
 
 image::ocp4-home.png[image]
+
+NOTE: If you login as regular user, you will not see any project when logging in the first time.
 
 Congratulations!! You now ready for more fun work!

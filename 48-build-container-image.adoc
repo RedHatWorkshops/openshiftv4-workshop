@@ -200,8 +200,8 @@ route.route.openshift.io/hello exposed
 [~] $ oc get route
 NAME    HOST/PORT                                                   PATH   SERV
 ICES   PORT       TERMINATION   WILDCARD
-hello   hello-testdocker.apps.cluster-4c7b.sandbox575.opentlc.com          hell
-o      8080-tcp                 None
+hello   hello-testdocker.apps.cluster-4c7b.sandbox575.opentlc.com          hello      8080-tcp                 None
+
 [~] $ curl hello-testdocker.apps.cluster-4c7b.sandbox575.opentlc.com
 <html>
 <body>

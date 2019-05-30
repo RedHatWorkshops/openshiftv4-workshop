@@ -5,16 +5,19 @@ config:
       value: openshift4
     - name: CONSOLE_ADDRESS
       desc: HTTP address of the OpenShift console
-      value: https://console-openshift-console.apps.cluster-d724.sandbox182.opentlc.com
+      value: https://console-openshift-console.apps.cluster-68a6.sandbox132.opentlc.com
     - name: APPS_ADDRESS
       desc: HTTP address suffix of apps deployed on OpenShift
-      value: apps.cluster-d724.sandbox182.opentlc.com/
+      value: apps.cluster-68a6.sandbox132.opentlc.com/
     - name: GET_STARTED_CLI_URL
       desc: URL to documentation to configure CLI
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
     - name: API_URL
       desc: URL to API server
-      value: https://api.cluster-d724.sandbox182.opentlc.com:6443
+      value: https://api.cluster-68a6.sandbox132.opentlc.com:6443
+    - name: CLI_URL
+      desc: URL to download CLI
+      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.7/openshift-client-linux-4.1.0-rc.7.tar.gz
     - name: NEXUS_URL
       desc: URL to Nexus repository
       value: http://nexus-workshop.apps

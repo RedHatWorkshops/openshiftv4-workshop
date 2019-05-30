@@ -29,7 +29,7 @@ image::create-project.png[image]
   noting that there's no `http://`, enter exactly as shown here,
   without the quotes
 - Select the magnifying glass icon to the right of the box
-- Enter a Name for the deployment
+- Use the default `Name` for the deployment
 - Scroll down a bit and provide an environment variable.
 - Add `OC_VERSION` and `4.1` as `Environment Variable` section at the bottom on the page.
 
@@ -37,7 +37,7 @@ image::ocp4-deploy-image.png[image]
 
 - Click `Deploy`
 - On the left-hand side menu, select `Workload` --> `Deployments Configs`
-- See the deployment details here
+- Click onto the `workshop-terminal` to see the deployment details here
 
 image::ocp4-dc.png[image]
 
@@ -58,14 +58,14 @@ https://docs.openshift.com/container-platform/3.11/security/monitoring.html#secu
 Next we need to create a route so we can access this application from the outside of OpenShift (i.e. from the internet).
 
 - Navigate to `Networking` --> `Routes`
-- Click `create route` in the top-left
+- Click `Create Route` in the top-left
 - Enter `workshop-terminal` for the name of the route, leave the hostname and path the default
 - Select `workshop-terminal` from the list of services in the `Service` menu
 - Select the only port in the `Target Port` drop down (should be port 10080 --> 10080), like this:
 
 image::ocp4-route.png[image]
 
-- When you're ready, click `Create` at the bottom and it will create the route.
+- Click `Create` at the bottom and it will create the route.
 - You will now be presented with a pane that shows the overview of the route:
 
 image::ocp4-route-details.png[image]
@@ -73,26 +73,29 @@ image::ocp4-route-details.png[image]
 
 === Accessing the terminal
 
-- In the top right hand side of the route details page, you will see the `Location`
+- In the top right hand side of the route details page, you will see the `LOCATION`
 which will be the routable URL that will provide access to our workshop terminal.
 - Click on the link under `LOCATION` and you will see the in-browser terminal
 session that we can use (if preferred, or mandated due to connectivity issues):
 
 image::run-oc-terminal.png[image]
 
+
+=== Setup OC CLI in web terminal
+
 - Execute the following in the terminal:
 
-```
-$ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.5/openshift-client-linux-4.1.0-rc.5.tar.gz
+....
+$ wget {{CLI_URL}}
 $ tar zvxf openshift-client-linux-4.1.0-rc.5.tar.gz
 $ mv oc /opt/app-root/bin/
 $ oc version
-```
+....
 
 NOTE: If normal cut/paste does not work, you can try to use browser's edit menu for cut/paste.
 
 image::ocp4-web-terminal.png[image]
 
 Congratulations!! You now know how to create a project, an application
-using an external docker image and navigate around. You can use this terminal
-to access the cluster via CLI.
+using an external docker image and navigate around. You also install OC CLI on
+the web terminal to access the cluster via CLI.

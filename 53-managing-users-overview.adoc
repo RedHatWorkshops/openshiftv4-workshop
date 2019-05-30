@@ -38,8 +38,12 @@ Currently supported authentication methods are:
 More information can be found
 https://docs.openshift.com/container-platform/4.1/authentication/understanding-identity-provider.html#supported-identity-providers
 
+=== Configure HTPASSWD Provider
+
 In this example, we are going to setup `htpasswd` which is a "flat file" for
 authentication.
+
+==== Create a htpasswd file
 
 - Create the file manually, run the below command where you get access to openssl.
 
@@ -57,37 +61,28 @@ $ wget https://raw.githubusercontent.com/RedHatWorkshops/openshiftv4-workshop/ma
 
 NOTE: 3 users will be created using this file. They are devday01, devday02, and devday03. Password as *openshift4*
 
-- Rename the file
+==== Using CLI (OPTION 1)
 
-....
-$ mv htpasswd-dd htppass-dd-NN
-....
-
-NOTES: NN is assigned number
-
-
-=== Create htpasswd secret
+===== Create htpasswd secret
 
 The authentication operator will read the htpasswd file from a secret in the
 openshift-config project. Go ahead and create that secret using the following command:
 
 ....
-$ oc create secret generic htpass-dd-NN-secret --from-file=htpasswd=htpasswd-dd-NN -n openshift-config
+$ oc create secret generic htpass-dd-secret --from-file=htpasswd=htpasswd-dd -n openshift-config
 ....
 
-NOTE: The above command assumes that htpasswd-dd-NN is the filename that you're
+NOTE: The above command assumes that htpasswd-dd is the filename that you're
 wanting to use, and is in your current working directory. If it's not, you will
 need to specify the full location.
 
-NOTES: NN is assigned number
-
-=== Create the Identities Provider Custom Resource
+==== Create the Identities Provider Custom Resource
 
 The operator that configures authentication is looking for a CustomResource object.
 In our case, we want one that tells it to configure htpasswd authentication using
 the provided secret. Here's what that definition looks like:
 
-- Save this file as htpasswd-dd-NN-cr.yaml
+- Save this file as htpasswd-dd-cr.yaml
 
 ....
 apiVersion: config.openshift.io/v1
@@ -96,25 +91,41 @@ metadata:
   name: cluster
 spec:
   identityProviders:
-  - name: dd_NN_htpasswd_provider
+  - name: dd_htpasswd_provider
     challenge: true
     login: true
     mappingMethod: claim
     type: HTPasswd
     htpasswd:
       fileData:
-        name: htpass-dd-NN-secret
+        name: htpass-dd-secret
 ....
 
-NOTES: NN is assigned number
 
 - Create the Custom Resource for auth with the command here:
 
 ....
-$ oc apply -f htpasswd-dd-NN-cr.yaml
+$ oc apply -f htpasswd-dd-cr.yaml
 ....
 
-NOTES: NN is assigned number
+==== Configure the Oauth on the Web Console (Option 2)
+
+- Login to OpenShift Console {{CONSOLE_ADDRESS}}
+- Navigate to `Administration` --> `Cluster Settings`
+- Click `Global Configuration` tab
+- Click `OAuth`
+- Click `Add` --> `HTPasswd`
+- Enter `htpasswd-dd` as `Name`
+
+image::ocp4-oauth-add.png[image]
+
+- Click `Browse` to select the htpasswd-dd file that was created previously
+
+image::ocp4-oauth-htpasswd.png[image]
+
+- Click `Add`
+
+image::ocp4-oauth-htpasswd.png[image]
 
 === Test Authentication
 
@@ -128,9 +139,9 @@ $ oc login -u devday01 -p openshift4
 
 ....
 $ oc get users
-NAME       UID                                    FULL NAME       IDENTITIES
-admin      9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
-devday01   8423f1bc-81e0-11e9-95da-0a580a810022                   dd_htpasswd_provider:devday01
+NAME       UID                                    FULL NAME   IDENTITIES
+admin      700eef60-82fd-11e9-9bf6-0a580a82001e               htpasswd:admin
+devday01   a30dfe2a-8301-11e9-ae97-0a580a810019               htpasswd-dd:devday01
 ....
 
 When deleted a user from the backend authentication
@@ -146,7 +157,7 @@ You should now see the user gone from the list
 ....
 $ oc get users
 NAME      UID                                    FULL NAME       IDENTITIES
-admin     9fb78e55-8163-11e9-a965-0a580a800020                   my_htpasswd_provider:admin
+admin      700eef60-82fd-11e9-9bf6-0a580a82001e               htpasswd:admin
 ....
 
 *Re-Using the User* If you want to re-use this user with a later lab
