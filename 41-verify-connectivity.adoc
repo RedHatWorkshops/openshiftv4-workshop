@@ -6,12 +6,12 @@
 Next, let's login to the web-console and ensure that it's working as expected.
 
 - Console URL: {{CONSOLE_ADDRESS}}
-- Click Advance and Click proceed link on the browser, you should be presented with the page to select the authentication providers.
-- Click `htpasswd`
+- Click `Advance` and Click `proceed...` link on the browser, you should be
+presented with the page to select the authentication providers.
 
 image::login-providers.png[image]
 
-- Click `Advance` and Click proceed link on the browser, you should be presented with the login page.
+- Click `htpasswd`
 
 image::ocp4-login.png[image]
 
