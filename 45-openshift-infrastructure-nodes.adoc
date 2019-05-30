@@ -3,7 +3,11 @@
 
 == OpenShift Infrastructure Nodes
 
-In this section we're going to look at the OpenShift infrastructure nodes, and more specifically how to scale them once they've been deployed. To understand what we mean by "infrastructure node", the nodes running the following services would fall into that description, although this is not necessarily an exhaustive list:
+In this section we're going to look at the OpenShift infrastructure nodes, and
+more specifically how to scale them once they've been deployed.
+To understand what we mean by "infrastructure node", the nodes running the
+following services would fall into that description, although this is not
+necessarily an exhaustive list:
 
 Kubernetes and OpenShift control plane services ("masters")
 
@@ -13,12 +17,19 @@ Kubernetes and OpenShift control plane services ("masters")
 - Cluster aggregated logging
 - Service Brokers
 
-NOTE: The OpenShift subscription model allows customers to run various core infrastructure components at no additional charge. In other words, a node that is only running core OpenShift infrastructure components is not counted in terms of the total number of subscriptions required to cover the environment. Any node running a container, pod, or component not described above is considered a worker and must be covered by a subscription.
+NOTE: The OpenShift subscription model allows customers to run various core
+infrastructure components at no additional charge. In other words, a node that
+is only running core OpenShift infrastructure components is not counted in terms
+of the total number of subscriptions required to cover the environment. Any node
+running a container, pod, or component not described above is considered a worker
+and must be covered by a subscription.
 
-If we wanted to see what different types of nodes, we have in our cluster we need to do a bit of digging.
-We can list all of the machines as part of our cluster in a couple of different ways:
+If we wanted to see what different types of nodes, we have in our cluster we need
+to do a bit of digging. We can list all of the machines as part of our cluster
+in a couple of different ways:
 
-- With the simple oc get nodes which queries Kubernetes specifically for the nodes that are reporting in:
+- With the simple `oc get nodes` which queries Kubernetes specifically for the
+nodes that are reporting in:
 
 ```
 $ oc project default
@@ -46,8 +57,10 @@ linux,failure-domain.beta.kubernetes.io/region=us-east-2,failure-domain.beta.kub
 ift.io/os_id=rhcos,node.openshift.io/os_version=4.1
 ```
 
-- The Machine extension which uses a Kubernetes operator to manage the nodes themselves through the cluster itself;
-this can give us a little more information about the nodes and the underlying infrastructure, noting that this environment is running on-top of AWS:
+- The Machine extension which uses a Kubernetes operator to manage the nodes
+themselves through the cluster itself; this can give us a little more information
+about the nodes and the underlying infrastructure, noting that this environment
+is running on-top of AWS:
 
 ```
 $ oc get machines --all-namespaces --show-labels
@@ -69,12 +82,19 @@ ter-3e5f-kqr2b,machine.openshift.io/cluster-api-machine-role=worker,machine.open
 r-us-east-2c
 ```
 
-In both of these outputs you'll note that both of the outputs have roles listed, and these are associated to kubernetes labels for scheduling purposes; we have two types of role defined: master and worker.
-With the exception of master nodes (due to specific scheduling and deployment limitations), all other node types are deployed as part of a MachineSet, and can therefore be scaled as one.
+- In both of these outputs you'll note that both of the outputs have roles listed,
+and these are associated to kubernetes labels for scheduling purposes; we have
+two types of role defined: `master` and `worker`. With the exception of master
+nodes (due to specific scheduling and deployment limitations), all other node
+types are deployed as part of a `MachineSet`, and can therefore be scaled as one.
 
 === More MachineSet Details
 
-In the previous section, you explored the MachineSets resource and scaled the cluster by changing its replica count, adding additional workers, we also configured an auto scaler to ensure that the cluster would have the required capacity to accommodate the workload demand. You'll note that right now we only have worker type machine sets configured:
+- In the previous section, you explored the MachineSets resource and scaled the
+cluster by changing its replica count, adding additional workers, we also
+configured an auto scaler to ensure that the cluster would have the required
+capacity to accommodate the workload demand. You'll note that right now we only
+have worker type machine sets configured:
 
 ```
 $ oc get machinesets -n openshift-machine-api
@@ -84,9 +104,18 @@ cluster-3e5f-kqr2b-worker-us-east-2b   1         1         1       1           2
 cluster-3e5f-kqr2b-worker-us-east-2c   1         1         1       1           26h
 ```
 
-- Here we have three distinct machine sets deployed, each with a single machine running. Each machine set is aligned with a given AWS EC2 availability zone, and we could easily deploy additional machines (or nodes) into one of the three listed (2a, 2b and 2c). If we wanted to add additional capacity to our cluster we could adjust the replica count like we did in the previous lab, remembering that we randomly selected one of the machine sets in the overall configuration, but that's just for worker nodes, i.e. where our user applications run, and where some of the key infrastructure components run by default, e.g. our routers, etc.
+- Here we have three distinct machine sets deployed, each with a single machine
+running. Each machine set is aligned with a given AWS EC2 availability zone,
+and we could easily deploy additional machines (or nodes) into one of the three
+listed (2a, 2b and 2c). If we wanted to add additional capacity to our cluster
+we could adjust the replica count like we did in the previous lab, remembering t
+hat we randomly selected one of the machine sets in the overall configuration,
+but that's just for worker nodes, i.e. where our user applications run, and where
+some of the key infrastructure components run by default, e.g. our routers, etc.
 
-- If we wanted to create a dedicated infrastructure role where we could run specific infrastructure services, components, and pods on (and move them away from the worker nodes like they are by default). We would need to:
+- If we wanted to create a dedicated infrastructure role where we could run
+specific infrastructure services, components, and pods on (and move them away
+from the worker nodes like they are by default). We would need to:
   1. Create an additional set of nodes
   2. Define a MachineSet to deploy and scale them into
   3. Label them with specific kubernetes labels.
@@ -94,21 +123,27 @@ cluster-3e5f-kqr2b-worker-us-east-2c   1         1         1       1           2
 
 - To accomplish this, you will create additional MachineSets. The easiest way to do this is:
   1. Get the existing MachineSets by downloading it into a file
-  2. Modifying them. This is because the MachineSet has some details that are specific to the AWS region that the cluster is deployed in, like the AWS EC2 AMI ID, so crafting it by hand would be very difficult.
+  2. Modifying them. This is because the MachineSet has some details that are
+  specific to the AWS region that the cluster is deployed in, like the AWS EC2
+  AMI ID, so crafting it by hand would be very difficult.
 
 - Here is what we are going to do:
   1. Take a look at one of our MachineSets in detail to understand how the configuration is set
   2. Look to adapt it to create a new one for specifically for our infrastructure services.
-  3. Use the following command, noting that you'll have to adjust the command to suit the name of your machine set. You can pick one of the machine sets from previous command:
+  3. Use the following command, noting that you'll have to adjust the command to
+  suit the name of your machine set. You can pick one of the machine sets from previous command:
 
 ```
-[~] $oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api -o yaml
+[~] $ oc project openshift-machine-api
+[~] $ oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -o yaml
 ```
+
+NOTE: Name of machineset is from your environment will be different from this above command.
 
 - Which will give you the following output:
 
 ```
-[~] $ oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -n openshift-machine-api -o yaml
+[~] $ oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -o yaml
 
 apiVersion: machine.openshift.io/v1beta1
 kind: MachineSet
@@ -136,6 +171,7 @@ spec:
       machine.openshift.io/cluster-api-machineset: cluster-3e5f-kqr2b-worker-us-east-2a
   template:
     metadata:
+
 ```
 
 There are a few very important sections in the output, we'll discuss them in depth below...
@@ -159,6 +195,7 @@ metadata:
   resourceVersion: "446823"
   selfLink: /apis/machine.openshift.io/v1beta1/namespaces/openshift-machine-api/machinesets/cluster-3e5f-kqr2b-worker-us-east-2a
   uid: 80644a16-75be-11e9-bb7c-02f7ee4a116e
+
 ```
 
 NOTE: You might see some annotations on your MachineSet if you use the MachineSet that you defined a MachineAutoScaler on in the previous lab section.
@@ -174,6 +211,7 @@ spec:
       machine.openshift.io/cluster-api-machine-role: worker
       machine.openshift.io/cluster-api-machine-type: worker
       machine.openshift.io/cluster-api-machineset: cluster-3e5f-kqr2b-worker-us-east-2a
+
 ```
 
 In this case, the cluster name is 3e5f-kqr2b and there is an additional label for the whole set.
@@ -263,6 +301,8 @@ This sounds complicated, so let's go through an example. Go ahead and dump one o
 ```
 $ oc get machineset cluster-3e5f-kqr2b-worker-us-east-2a -o yaml -n openshift-machine-api > infra-machineset.yaml
 ```
+
+NOTE: Name of machineset is from your environment will be different from this above command.
 
 Now open it with a text editor of your choice:
 

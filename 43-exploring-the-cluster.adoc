@@ -6,7 +6,9 @@
 In this lab exercise, we will review the OpenShift Web Console.
 Let's take some time to explore our  OCP4 cluster. You now have two options, you can use your local terminal on your laptop, or you can use the browser-based terminal that we provisioned in the previous section. Due to connectivity challenges, you may be forced to use the browser-based one, and for convenience our recommendation would be to use it. If you really want to configure your local client you can do so by using the following instructions to download the command line tooling. You should only do this if you don't want to use the browser-based terminal; make sure you run this on your local laptop and NOT within the web-browser.
 
-Currently using the OC client CLI from https://mirror.openshift.com/pub/openshift-v3/clients/. You can check if there is an updated one before running the download instruction. You can update the URL accordingly if you like.
+Currently using the OC client CLI from {{REDHAT_DOWNLOAD_OC_PORTAL_URL}}. You can
+check if there is an updated one before running the download instruction.You can
+update the URL accordingly if you like.
 
 ==== For Linux:
 
