@@ -22,9 +22,7 @@ image::create-project.png[image]
 
 === Deploy an Image
 
-- Click `Deploy Image`, or in the top-right
-- Click the *Add* drop-down menu
-- Select `Deploy Image`
+- Click `Deploy Image`, or in the top-right click the *Add* drop-down menu, then select `Deploy Image`
 - Enter `quay.io/openshiftlabs/workshop-terminal:2.4.0` in the `Image Name` box,
   noting that there's no `http://`, enter exactly as shown here,
   without the quotes

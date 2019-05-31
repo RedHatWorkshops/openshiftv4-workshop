@@ -30,7 +30,7 @@ unauthenticated registry while it is still available.
   * Register and create account at https://developers.redhat.com
   * Login to https://developers.redhat.com
   * Go to https://access.redhat.com/terms-based-registry/
-  * Click `New Service Accout` to create your registry service account
+  * Click `New Service Account` to create your registry service account
   * Enter your unique service account label to the `Name` and `Description`
   * Click `Create`
   * Click to `OpenShift Secret`
