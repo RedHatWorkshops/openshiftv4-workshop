@@ -13,7 +13,7 @@ IMPORTANT: Please replace *Username* with your username
 - Use the same username and password that assigned to you
 - On the left-hand side menu, select `Home` and then select `Project`
 - Click `Create Project`
-- Enter *web-terminal-Username* as name of the project. The display name and description is optional.
+- Enter *pets-Username* as name of the project. The display name and description is optional.
 
 image::create-project.png[image]
 
