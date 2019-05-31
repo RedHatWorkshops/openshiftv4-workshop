@@ -29,8 +29,6 @@ config:
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
 
 modules:
-  0-setting-up-client-tools:
-    name: Set up Client Tools
   41-verify-connectivity:
     name: Verify Connectivity
   42-create-app-from-container-image:
