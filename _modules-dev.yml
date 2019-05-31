@@ -29,8 +29,6 @@ modules:
     name: Verify Connectivity
   42-create-app-from-container-image:
     name: Create an App using Container image
-  43-exploring-the-cluster:
-    name: Exploring the Cluster
   48-build-container-image:
     name: Build Container Image via Dockerfile on OCP 4
   54-scaling-app-instances:
@@ -41,3 +39,5 @@ modules:
     name: Create a Pipeline
   46-using-operatorhub:
     name: Extensions to OpenShift using OperatorHub
+  43-exploring-the-cluster:
+    name: Exploring the Cluster
