@@ -33,43 +33,69 @@ or create from console
 
 - Open the OpenShift web console, and log-in.
 
-- On the left-hand side menu select 'Catalog', then 'OperatorHub':
+- On the left-hand side menu select 'Catalog' --> 'OperatorHub':
 
 image::operatorhub.png[image]
 
 NOTE: Only users with cluster admin privileges can see the Operator Hub interface.
 
-- At the top of the page, in the Project selector, choose mycouchbase.
+- At the top of the page, in the Project selector, choose `mycouchbase` from the dropdown.
 
-- Search, or browse to the Couchbase Operator and select it by clicking on it.
+- Search, or browse to the `Couchbase` Operator and select it by clicking on it.
 
-- The description lays out the notable features of the Operator. Go ahead and click `Install` to deploy the Operator on to the cluster. It may take several moments after clicking "Install" before the Subscription page shows up:
+- The description lays out the notable features of the Operator. Click `Install`
+to deploy the Operator on to the cluster. It may take several moments after
+clicking "Install" before the Subscription page shows up:
 
 image::couchbaseOperator.png[image]
 
-The installation process involves "subscribing" to an Operator from the hub. This subscription mechanism is how OpenShift learns about updates to the operator. Operator creators may roll updates for their operators to handle things like updates, enhancements, bug fixes, and other changes to the solution that the operator deploys. There are a number of options that you need to be aware of when deploying an Operator:
+- Select `mycouchbase` as the specific namespace
+
+The installation process involves "subscribing" to an Operator from the hub.
+This subscription mechanism is how OpenShift learns about updates to the operator.
+Operator creators may roll updates for their operators to handle things like
+updates, enhancements, bug fixes, and other changes to the solution that the
+operator deploys. There are a number of options that you need to be aware of
+when deploying an Operator:
 
 **Installation Mode**
-Operators can be enabled for all Projects across the cluster or only within specific namespaces. Not all Operators support each of these installation methods. The Couchbase operator only supports installation for a specific namespace. Make sure mycouchbase is selected to match the project you created earlier.
+Operators can be enabled for all Projects across the cluster or only within
+specific namespaces. Not all Operators support each of these installation methods.
+The Couchbase operator only supports installation for a specific namespace. Make
+sure mycouchbase is selected to match the project you created earlier.
 
 **Update Channel**
-Each Operator publisher can create channels for their software, to give adminsitrators more control over the versions that are installed. In this case, Couchbase only has a "preview" channel.
+Each Operator publisher can create channels for their software, to give
+adminsitrators more control over the versions that are installed. In this case,
+Couchbase only has a "preview" channel.
 
 **Update Approval Strategy**
-If Operator creators enable their operators to update the deployed solutions, Operator Lifecycle Manager is able to automatically apply those updates. Cluster administrators can decide whether or not OLM should or should not automatically apply updates. In the future, when Couchbase releases an updated operator to the "preview" channel, you can decide whether you want to approve each update, or have it happen automatically. Choose "Automatic" for now.
+If Operator creators enable their operators to update the deployed solutions,
+Operator Lifecycle Manager is able to automatically apply those updates. Cluster
+administrators can decide whether or not OLM should or should not automatically
+apply updates. In the future, when Couchbase releases an updated operator to the
+"preview" channel, you can decide whether you want to approve each update, or
+have it happen automatically. Choose "Automatic" for now.
 
-After clicking `Subscribe`, the Couchbase entry will now show that it is "Installed":
+- Clicking `Subscribe`, the Couchbase entry will now show that it is "Installed":
 
 image::couchbaseOperator.png[image]
 
-It's important to note that while the Operator Hub page indicates that the operator is "installed", really it is indicating that the operator is configured to be installed. It may take several minutes for OpenShift to pull in the operator to the cluster. You can check on the status of this operator with the following command:
+IMPORTANT: while the Operator Hub page indicates that the operator is "installed",
+really it is indicating that the operator is configured to be installed. It may
+take several minutes for OpenShift to pull in the operator to the cluster.
+You can check on the status of this operator with the following command:
 
 ```
 $ oc get pod --all-namespaces | grep -i couch
-openshift-operators                                     couchbase-operator-8b9c5c469-wh62l                                    1/1     Running     0          24m
+mycouchbase                                             couchbase-operator-dd5fff557-chg5p
+ 1/1     Running     0          27s
+openshift-marketplace                                   installed-certified-mycouchbase-77cfc9c4b5-wk48x
+ 1/1     Running     0          46s
 ```
 
-You will likely see the Couchbase operator pod in ContainerCreating status if you look very soon after finishing the installation/subscription process.
+- You will likely see the Couchbase operator pod in ContainerCreating status if
+you look very soon after finishing the installation/subscription process.
 
 === Using Secrets
 
@@ -77,7 +103,9 @@ The Couchbase operator is capable of installing and managing a Couchbase cluster
 
 Firstly can you can do it via the Web Console:
 
-- Open the OpenShift web console and navigate to "Workloads" on the left-hand side menu and then select "Secrets".
+- Open the OpenShift web console
+
+- Navigate to "Workloads" --> "Secrets".
 
 - Make sure the Project selector is set to mycouchbase at the top.
 
@@ -85,9 +113,12 @@ Firstly can you can do it via the Web Console:
 
 image::ocp4-secret.png[image]
 
-- Click "+ Add" at the upper right-hand area of the panel, and then choose "Import YAML". Paste the following YAML into the form (the username is "couchbase" and the password is "securepassword"):
+- Click "+ Add" at the upper right-hand area of the panel, and then choose
+"Import YAML". Paste the following YAML into the form (the username is
+"couchbase" and the password is "securepassword"):
 
 ```
+
 apiVersion: v1
 data:
   password: c2VjdXJlcGFzc3dvcmQ=
@@ -97,9 +128,10 @@ metadata:
   name: cb-example-auth
   namespace: mycouchbase
 type: Opaque
+
 ```
 
-- Once you're done, finally click create:
+- Click create:
 
 image::ocp4-import-secret.png[image]
 
@@ -112,29 +144,41 @@ Ultimately, you want a secret with the username couchbase and the password secur
 
 === Using an Installed Operator
 
-Regular users will use the "Developer Catalog" menu to add shared apps, services, or source-to-image builders to projects. Let's explore that interface and deploy a Couchbase cluster from our newly created Operator:
+Regular users will use the "Developer Catalog" menu to add shared apps, services,
+or source-to-image builders to projects. Let's explore that interface and deploy
+a Couchbase cluster from our newly created Operator:
 
-- Navigate to the "Developer Catalog" from the "Catalog" section of the main menu on the left-hand side.
+- Navigate `Catalog` --> `Developer Catalog` on the left-hand side.
 
 image::dev-catalog.png[image]
 
-- At the top of the page, again make sure you select mycouchbase from the Project dropdown.
+- At the top of the page, again make sure you select `mycouchbase` from the Project dropdown.
 
-- You should see that the Couchbase operator is available. If you choose a different Project, you should also notice that the Couchbase operator is not available in other Projects.
+- You should see that the Couchbase operator is available. If you choose a
+different Project, you should also notice that the Couchbase operator is not
+available in other Projects.
 
-- Click on the Couchbase Cluster tile, which is a capability that the Operator has extended our OpenShift cluster to support. Operators can expose more than one capability. For example, the MongoDB Operator exposes three common configurations of its database (and you would see three different MongoDB tiles).
+- Click on the `Couchbase Cluster` tile, which is a capability that the Operator
+has extended our OpenShift cluster to support. Operators can expose more than
+one capability. For example, the MongoDB Operator exposes three common
+configurations of its database (and you would see three different MongoDB tiles).
 
-- Deploy an instance of Couchbase by clicking the "Create" button in the top left:
+- Click `Create` to deploy an instance of Couchbase
 
 image::couchdbCluster.png[image]
 
-- The YAML editor has been pre-filled with a set of defaults for the resulting Couchbase cluster. One of those defaults is a reference to the Secret you created earlier:
+- The YAML editor has been pre-filled with a set of defaults for the resulting
+Couchbase cluster. One of those defaults is a reference to the Secret you
+created earlier:
 
 image::couchdb-cr.png[image]
 
-NOTE: version is 5.5.4-1 instead of the default.
+NOTE: version is 5.5.4-1 instead of the default. (at the bottom)
 
-- At this point we're able to change some of the Couchbase deployment parameters to our liking. Set the replicas field (under .spec.buckets) to 3, so our Operator sets up a highly available cluster for us. Your YAML should look like the following:
+- At this point we're able to change some of the Couchbase deployment parameters
+to our liking. Set the replicas field (under .spec.buckets) to 3, so our
+Operator sets up a highly available cluster for us. Your YAML should look like
+the following:
 
 ```
 apiVersion: couchbase.com/v1
@@ -157,24 +201,31 @@ spec:
 ...
 ```
 
-- Click "Create". Afterwards, you will be taken to a list of all Couchbase instances running with this Project and should see the one you just created has a status of "Creating":
+- Click "Create". Afterwards, you will be taken to a list of all Couchbase
+instances running with this Project and should see the one you just created
+has a status of "Creating":
 
 image::creatingCouchdb.png[image]
 
 === View the Deployed Resources
 
-Navigate to the Couchbase Cluster that was deployed by clicking cb-example, and then click on the "Resources" tab. This collects all of the objects deployed and managed by the Operator. From here you can ultimately view Pod logs to check on the Couchbase Cluster instances.
+- Navigate to the Couchbase Cluster that was deployed by clicking `cb-example`
+- lick on the `Resources` tab. This collects all of the objects deployed and
+managed by the Operator. From here you can ultimately view Pod logs to check on
+the Couchbase Cluster instances.
 
-If for some reason you had navigated away from the page after creating your Couchbase cluster, you can get back here by clicking "Catalog" -> "Installed Operators" -> "Couchbase Cluster" -> cb-example.
+- If for some reason you had navigated away from the page after creating your
+Couchbase cluster, you can get back here by clicking "Catalog" -> "Installed
+Operators" -> "Couchbase Cluster" -> cb-example.
 
-We are going to use the Service cb-example to access the Couchbase dashboard via a Route:
+- Create route from cb-example service
 
 ```
 $ oc expose service cb-example -n mycouchbase
 route.route.openshift.io/cb-example exposed
 ```
 
-You should now have a route:
+- A route is created
 
 ```
 $ oc get route -n mycouchbase
@@ -182,26 +233,34 @@ NAME         HOST/PORT                                                         P
 cb-example   cb-example-mycouchbase.apps.cluster-3e5f.sandbox580.opentlc.com          cb-example   couchbase                 None
 ```
 
-Your Couchbase installation is now exposed directly to the internet and is not using HTTPS. Go ahead and copy/paste the URL into your browser. Login with the user couchbase and the password securepassword (these were in your secret). If you used different credentials, make sure you put in the right ones:
+- Navigate to `Networking` --> `Routes`
+- Click on the URL under `LOCATION`
+- Login with the user `couchbase` and the password `securepassword` (these were
+in your secret). If you used different credentials, make sure you put in the
+right ones:
 
 image::couchdb.png[image]
 
-In the above, you should see 3 nodes listed for each function. We'll dynamically modify this in the next section.
+- You should see 3 nodes listed for each function. We'll dynamically modify this
+in the next section.
 
-*Re-Configure the Cluster with the Operator*
+=== Re-Configure the Cluster with the Operator
 
-Keep the Couchbase dashboard up, but select the Servers link on the left-hand side, it should look like the following:
+- Click the Servers link on the left-hand side, it should look like the following:
 
 image::couch-server.png[image]
 
-As the Operator scales up more Pods, they will automatically join and appear in the dashboard. Next, edit your cb-example Couchbase instance to have a server size of 4 instead of 3. You can navigate back to the installed instances of Couchbase via the web console, or you can use:
+- As the Operator scales up more Pods, they will automatically join and appear in
+the dashboard. Next, edit your cb-example Couchbase instance to have a server
+size of 4 instead of 3. You can navigate back to the installed instances of
+Couchbase via the web console, or you can use:
 
 ```
 $ oc edit couchbaseclusters.couchbase.com/cb-example -n mycouchbase
 (Opens in vi)
 ```
 
-Ensure that your .spec.servers section of the yaml looks like the following-
+- Ensure that your .spec.servers section of the yaml looks like the following-
 
 ```
   servers:
@@ -216,7 +275,7 @@ Ensure that your .spec.servers section of the yaml looks like the following-
     size: 4
 ```
 
-When you've updated your yaml, save and exit your editor:
+- When you've updated your yaml, save and exit your editor:
 
 ```
 couchbasecluster.couchbase.com/cb-example edited
@@ -229,51 +288,67 @@ A few things will happen:
   * The Couchbase dashboard will show 4 instances once the Pod is created
   * The Couchbase dashboard will show that the cluster is being rebalanced
 
-Your cluster dashboard should dynamically update to show the progress:
+- Your cluster dashboard should dynamically update to show the progress:
 
-After the cluster is scaled up to 4, try scaling back down to 3:
+- After the cluster is scaled up to 4, try scaling back down to 3:
 
 ```
 $ oc edit couchbaseclusters.couchbase.com/cb-example -n mycouchbase
 (Opens in vi)
 ```
 
-If you watch the dashboard closely, you will see that Couchbase has automatically triggered a re-balance of the data within the cluster to reflect the new topology of the cluster. This is one of many advanced feautres embedded within applications in OperatorHub to save you time when administering your workloads.
+- If you watch the dashboard closely, you will see that Couchbase has
+automatically triggered a re-balance of the data within the cluster to reflect
+the new topology of the cluster. This is one of many advanced feautres embedded
+within applications in OperatorHub to save you time when administering your
+workloads.
 
 === Delete the Couchbase Instance
 
-After you are done, delete the cb-example Couchbase instance and the Opeator will clean up all of the resources that were deployed. Remember to delete the Route that we manually created as well. Remember to delete the Operator instance and not to delete the Pods or other resources directly -- the operator will immediately try to fix that thinking that there's a problem!
+After you are done, delete the cb-example Couchbase instance and the Opeator
+will clean up all of the resources that were deployed. Remember to delete the
+Route that we manually created as well. Remember to delete the Operator instance
+and not to delete the Pods or other resources directly -- the operator will
+immediately try to fix that thinking that there's a problem!
 
-- Navigate to "Catalog" --> "Installed Operators" on the left-hand side
+- Navigate to `Catalog` -> `Installed Operators` on the left-hand side
+- Click `Couchbase Operator`
 
-- Select the "Couchbase Cluster" link under Provided APIs towards the right of the panel
+- Click `Couchbase Cluster` tab
 
-- On the right of the cb-example cluster line, click on the drop down (3 dots) and select "Delete Couchbase Cluster":
+- On the right of the `cb-example` line, click on the drop down (3 dots)
+and select "Delete Couchbase Cluster":
+
+- Click `Delete`
 
 image::delete-couchdb.png[image]
 
-- Return to the main menu on the left hand side, navigate to "Networking" and then to "Routes"
+- Navigate to `Networking` -> `Routes`
 
 - On the drop-down menu (3 dots) to the right of our "cb-example" route, select "Delete Route":
 
 image::ocp4-delete-route.png[image]
 
-After you delete the cb-example cluster, if you look at the pods quickly you'll see the pods terminating, otherwise you'll likely only see the Operator pod running:
+- Click `Delete`
+- After you delete the cb-example cluster, if you look at the pods quickly
+you'll see the pods terminating, otherwise you'll likely only see the Operator
+pod running:
 
 ```
 $ oc get pod -n mycouchbase
 NAME                                  READY   STATUS    RESTARTS   AGE
 couchbase-operator-56c798b7c6-d7wdc   1/1     Running   0          54m
 ```
-The Operator Pod remains, that's because there's still a Subscription for the Couchbase operator in this Project. You can delete the Subscription (and, thus, the Pod) by going to "Operator Management" -> "Operator Subscriptions". There you can click the 3 dots and remove the Subscription for the Couchbase Operator in the mycouchbase Project. Now there should be no pods, and you can also delete the project if you wish.
+- The Operator Pod remains, that's because there's still a Subscription for the
+Couchbase operator in this Project. You can delete the Subscription (and, thus,
+the Pod) by going to "Operator Management" -> "Operator Subscriptions". There you
+can click the 3 dots and remove the Subscription for the Couchbase Operator in
+the mycouchbase Project. Now there should be no pods, and you can also delete
+the project if you wish.
 
 image::ocp4-delete-route.png[image]
 
-Either way, return to the default project before continuing:
 
-```
-$ oc project default
-Now using project "default" on server "https://api.cluster-3e5f.sandbox580.opentlc.com:6443".
-```
-
-Congratulations!! You now know how to install operators and deploy application via OperatorHub. From more information about operator, see https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html for more details.
+Congratulations!! You now know how to install operators and deploy application
+via OperatorHub. From more information about operator, see
+https://docs.openshift.com/container-platform/4.1/applications/operators/olm-what-operators-are.html for more details.

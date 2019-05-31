@@ -77,8 +77,13 @@ $ sudo podman stop hello
 $ sudo podman rm hello
 ....
 
-With OpenShift, we will be building the container image on OpenShift, deploy it
-as an application, and ready to be consume.
+NOTE: Above steps are not for this lab. It is just an example how you would build
+an image locally.
+
+==== Build container Image on Openshift
+
+With OpenShift, we will be building the container image, deploy the container as
+an application, and ready to be consume.
 
 - Download your service account from https://access.redhat.com/terms-based-registry/ as an OpenShift secret as shown in the previous section.
 - Save the secret yaml file to your local filesystem as my-service-account-pull-secret.yaml
