@@ -58,8 +58,11 @@ $ oc new-project buildimage-Username
 
 === Create an application that uses Dockerfile
 
-What you can build your container image locally via podman or docker CLI with
+You can build your container image locally via podman or docker CLI with
 similar steps as shown below.
+
+NOTE: Below steps are not for this lab. It is just an example how you would build
+an image locally.
 
 ....
 $ git clone https://github.com/flozanorht/testphp-ubi.git
@@ -77,9 +80,6 @@ $ sudo podman stop hello
 $ sudo podman rm hello
 ....
 
-NOTE: Above steps are not for this lab. It is just an example how you would build
-an image locally.
-
 ==== Build container Image on Openshift
 
 With OpenShift, we will be building the container image, deploy the container as
@@ -90,7 +90,7 @@ an application, and ready to be consume.
 - Login to the CLI terminal and execute the following
 - Create a secret from the file you downloaded from last step.
 
-NOTE: If you are using the web termainal, you will have to create a file with the
+NOTE: If you are using the web terminal, you will have to create a file with the
 same content of the secret file in your web terminal.
 
 ....
