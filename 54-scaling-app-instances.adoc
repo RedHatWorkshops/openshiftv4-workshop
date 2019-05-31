@@ -24,7 +24,7 @@ previous labs. Make sure you are switched to that project by using the
 
 === View the deployment config
 
-Take a look at the `deploymentConfig` (or `dc`) of the `time`
+Take a look at the `deploymentConfig` (or `dc`) of the `hello`
 application
 
 - Navigate to `Workloads` --> Deployment Configs
