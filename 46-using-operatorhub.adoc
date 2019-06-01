@@ -19,17 +19,22 @@ In this example, we're going to deploy Couchbase through the Operator framework 
 
 === Create a Project
 
-Before you get started, create a project for what you're about to do with Couchbase. You can either do it from the command line:
+Before you get started, create a project for what you're about to do with Couchbase.
+You can either do it from the command line:
+
+IMPORTANT: Please replace *Username* with your username
 
 ```
-$ oc new-project mycouchbase
-Now using project "mycouchbase" on server "{{API_URL}}"
+$ oc new-project mycouchbase-Username
+Now using project "mycouchbase-Username" on server "{{API_URL}}"
 ```
 or create from console
 
 === Installing an Extension
 
-- Installing your first Operator is best done through the user interface, but can also be driven by the command line. Let's complete this section using the web console:
+- Installing your first Operator is best done through the user interface, but
+can also be driven by the command line. Let's complete this section using the
+web console:
 
 - Open the OpenShift web console, and log-in.
 
@@ -39,7 +44,8 @@ image::operatorhub.png[image]
 
 NOTE: Only users with cluster admin privileges can see the Operator Hub interface.
 
-- At the top of the page, in the Project selector, choose `mycouchbase` from the dropdown.
+- At the top of the page, in the Project selector, choose `mycouchbase-Username`
+from the dropdown.
 
 - Search, or browse to the `Couchbase` Operator and select it by clicking on it.
 
@@ -49,7 +55,7 @@ clicking "Install" before the Subscription page shows up:
 
 image::couchbaseOperator.png[image]
 
-- Select `mycouchbase` as the specific namespace
+- Select `mycouchbase-Username` as the specific namespace
 
 The installation process involves "subscribing" to an Operator from the hub.
 This subscription mechanism is how OpenShift learns about updates to the operator.
@@ -62,7 +68,7 @@ when deploying an Operator:
 Operators can be enabled for all Projects across the cluster or only within
 specific namespaces. Not all Operators support each of these installation methods.
 The Couchbase operator only supports installation for a specific namespace. Make
-sure mycouchbase is selected to match the project you created earlier.
+sure `mycouchbase-Username` is selected to match the project you created earlier.
 
 **Update Channel**
 Each Operator publisher can create channels for their software, to give
@@ -107,7 +113,7 @@ Firstly can you can do it via the Web Console:
 
 - Navigate to "Workloads" --> "Secrets".
 
-- Make sure the Project selector is set to mycouchbase at the top.
+- Make sure the Project selector is set to `mycouchbase-Username` at the top.
 
 - Now click the "Create" selector and choose "Key/Value Secret":
 
@@ -126,10 +132,12 @@ data:
 kind: Secret
 metadata:
   name: cb-example-auth
-  namespace: mycouchbase
+  namespace: mycouchbase-Username
 type: Opaque
 
 ```
+
+Notes: Replace the *Username* to your username
 
 - Click create:
 
@@ -152,7 +160,7 @@ a Couchbase cluster from our newly created Operator:
 
 image::dev-catalog.png[image]
 
-- At the top of the page, again make sure you select `mycouchbase` from the Project dropdown.
+- At the top of the page, again make sure you select `mycouchbase-Username` from the Project dropdown.
 
 - You should see that the Couchbase operator is available. If you choose a
 different Project, you should also notice that the Couchbase operator is not
@@ -185,7 +193,7 @@ apiVersion: couchbase.com/v1
 kind: CouchbaseCluster
 metadata:
   name: cb-example
-  namespace: mycouchbase
+  namespace: mycouchbase-Username
 spec:
   authSecret: cb-example-auth
   baseImage: registry.connect.redhat.com/couchbase/server
@@ -215,22 +223,23 @@ managed by the Operator. From here you can ultimately view Pod logs to check on
 the Couchbase Cluster instances.
 
 - If for some reason you had navigated away from the page after creating your
-Couchbase cluster, you can get back here by clicking "Catalog" -> "Installed
-Operators" -> "Couchbase Cluster" -> cb-example.
+Couchbase cluster, you can get back here by clicking `Catalog` -> `Installed
+Operators` -> `Couchbase Cluster` -> cb-example.
 
 - Create route from cb-example service
 
 ```
-$ oc expose service cb-example -n mycouchbase
+$ oc project mycouchbase-Username
+$ oc expose service cb-example
 route.route.openshift.io/cb-example exposed
 ```
 
 - A route is created
 
 ```
-$ oc get route -n mycouchbase
+$ oc get route
 NAME         HOST/PORT                                                         PATH   SERVICES     PORT        TERMINATION   WILDCARD
-cb-example   cb-example-mycouchbase.apps.cluster-3e5f.sandbox580.opentlc.com          cb-example   couchbase                 None
+cb-example   cb-example-mycouchbase-Username.apps.cluster-3e5f.sandbox580.opentlc.com          cb-example   couchbase                 None
 ```
 
 - Navigate to `Networking` --> `Routes`
@@ -256,7 +265,9 @@ size of 4 instead of 3. You can navigate back to the installed instances of
 Couchbase via the web console, or you can use:
 
 ```
-$ oc edit couchbaseclusters.couchbase.com/cb-example -n mycouchbase
+$ oc project mycouchbase-Username
+(if you are not already in your project)
+$ oc edit couchbaseclusters.couchbase.com/cb-example
 (Opens in vi)
 ```
 
@@ -293,7 +304,7 @@ A few things will happen:
 - After the cluster is scaled up to 4, try scaling back down to 3:
 
 ```
-$ oc edit couchbaseclusters.couchbase.com/cb-example -n mycouchbase
+$ oc edit couchbaseclusters.couchbase.com/cb-example
 (Opens in vi)
 ```
 
@@ -325,7 +336,7 @@ image::delete-couchdb.png[image]
 
 - Navigate to `Networking` -> `Routes`
 
-- On the drop-down menu (3 dots) to the right of our "cb-example" route, select "Delete Route":
+- On the drop-down menu (3 dots) to the right of our `cb-example` route, select `Delete Route`:
 
 image::ocp4-delete-route.png[image]
 
@@ -335,7 +346,7 @@ you'll see the pods terminating, otherwise you'll likely only see the Operator
 pod running:
 
 ```
-$ oc get pod -n mycouchbase
+$ oc get pod -n mycouchbase-Username
 NAME                                  READY   STATUS    RESTARTS   AGE
 couchbase-operator-56c798b7c6-d7wdc   1/1     Running   0          54m
 ```
