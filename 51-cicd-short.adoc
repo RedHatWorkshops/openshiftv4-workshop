@@ -114,7 +114,7 @@ image::jenkins.png[image]
 
 === Pipeline setup
 
-- Create pipeline via web termainal
+- Create pipeline via web terminal
 
 ```
 [~]$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
