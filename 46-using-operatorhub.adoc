@@ -210,7 +210,7 @@ image::creatingCouchdb.png[image]
 === View the Deployed Resources
 
 - Navigate to the Couchbase Cluster that was deployed by clicking `cb-example`
-- lick on the `Resources` tab. This collects all of the objects deployed and
+- Click on the `Resources` tab. This collects all of the objects deployed and
 managed by the Operator. From here you can ultimately view Pod logs to check on
 the Couchbase Cluster instances.
 
