@@ -346,7 +346,7 @@ can click the 3 dots and remove the Subscription for the Couchbase Operator in
 the mycouchbase Project. Now there should be no pods, and you can also delete
 the project if you wish.
 
-image::ocp4-delete-route.png[image]
+image::ocp4-delete-sub.png[image]
 
 
 Congratulations!! You now know how to install operators and deploy application
