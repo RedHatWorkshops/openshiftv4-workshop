@@ -5,22 +5,22 @@ config:
       value: openshift4
     - name: CONSOLE_ADDRESS
       desc: HTTP address of the OpenShift console
-      value: https://console-openshift-console.apps.cluster-68a6.sandbox132.opentlc.com
+      value: https://console-openshift-console.apps.cluster-omni.sc.osecloud.com
     - name: APPS_ADDRESS
       desc: HTTP address suffix of apps deployed on OpenShift
-      value: apps.cluster-68a6.sandbox132.opentlc.com/
+      value: apps.cluster-omni.sc.osecloud.com/
     - name: GET_STARTED_CLI_URL
       desc: URL to documentation to configure CLI
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
     - name: API_URL
       desc: URL to API server
-      value: https://api.cluster-68a6.sandbox132.opentlc.com:6443
+      value: https://api.cluster-omni.sc.osecloud.com:6443
     - name: LINUX_CLI_URL
       desc: URL to download CLI
-      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.7/openshift-client-linux-4.1.0-rc.7.tar.gz
+      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0/openshift-client-linux-4.1.0.tar.gz
     - name: MAC_CLI_URL
       desc: URL to download CLI
-      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0-rc.7/openshift-client-mac-4.1.0-rc.7.tar.gz
+      value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0/openshift-client-mac-4.1.0.tar.gz
     - name: NEXUS_URL
       desc: URL to Nexus repository
       value: http://nexus-workshop.apps
@@ -33,15 +33,13 @@ modules:
       name: Verify Connectivity
     42-create-app-from-container-image:
       name: Create an App using Container image
-    48-build-container-image:
-      name: Build Container Image via Dockerfile on OCP 4
-    54-scaling-app-instances:
-      name: Scaling Application Instances
-    52-deploy-java-app:
-      name: Deploy a Java Application
-    51-cicd-short:
-      name: Create a Pipeline
-    46-using-operatorhub:
-      name: Extensions to OpenShift using OperatorHub
     43-exploring-the-cluster:
       name: Exploring the Cluster
+    44-scaling-an-openshift4-cluster:
+      name: Scaling OpenShift4 Cluster
+    45-openshift-infrastructure-nodes:
+      name: Setting up OpenShift Infrastructure Nodes
+    46-using-operatorhub:
+      name: Extensions to OpenShift using OperatorHub
+    53-managing-users-overview:
+      name: Managing Users Overview

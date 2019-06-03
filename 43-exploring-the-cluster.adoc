@@ -16,7 +16,7 @@ update the URL accordingly if you like.
 ....
 [~] $ wget {{LINUX_CLI_URL}}
 (...)
-[~] $ tar -zxvf openshift-client-linux-4.1.0-rc.7.tar.gz
+[~] $ tar -zxvf openshift-client-linux-4.1.0.tar.gz
 oc
 
 [~] $ export PATH=$PATH:$(pwd)
@@ -32,13 +32,20 @@ e:"2019-05-18T00:35:43Z", GoVersion:"go1.11.5", Compiler:"gc", Platform:"linux/a
 ....
 [~] $ wget {{MAC_CLI_URL}}
 (...)
-[~] $ tar zxvf openshift-client-mac-4.1.0-rc.7.tar.gz
+[~] $ tar zxvf openshift-client-mac-4.1.0.tar.gz
 x oc
 
 [~] $ export PATH=$PATH:$(pwd)
 [~] $ oc version
 Client Version: version.Info{Major:"4", Minor:"1+", GitVersion:"v4.1.0-201905171742+b941ca8-dirty", GitCommit:"b941ca8", GitTreeState:"dirty", BuildDate:"2019-05-18T01:11:26Z", GoVersion:"go1.11.5", Compiler:"gc", Platform:"darwin/amd64"}
 ....
+
+==== For Windows:
+
+- Download CLI from https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.1.0/openshift-client-windows-4.1.0.zip
+- Extract the downloaded zip file.
+- Download download git bash for Windows from http://git-scm.com is recommended
+- Set up PATH on your Windows laptop
 
 === Login vi CLI
 
