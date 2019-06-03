@@ -1,0 +1,205 @@
+[[using-codereay]]
+= OpenShift 4 as a Developer
+
+== OpenShift 4 as a Developer
+
+In this lab, we're aiming to get you familiar with Red Hat CodeReady Workspaces.
+
+=== Deploying CodeReady Workspace
+
+CodeReady is Red Hat's browser-based intelligent developer IDE. We'll use the
+CodeReady operator to deploy CodeReady so that we can use it in our project
+to develop our apps.
+
+IMPORTANT: Please replace *Username* with your username
+
+- Create a new project `codeready-Username`
+- - As an Operator administrator, run this command before proceeding:
+
+```
+oc create clusterrole codeready-operator --resource=oauthclients --verb=get,create,delete,update,list,watch
+oc create clusterrolebinding codeready-operator --clusterrole=codeready-operator --serviceaccount=codeready-Username:codeready-operator
+
+```
+
+- Navigate to Catalog -> OperatorHub
+- Enter `CodeReady` in the search field
+
+image::codeready-operator.png[image]
+
+- Click the `CodeReady` operator
+- Click `Install`
+
+image::codeready-subscription.png[image]
+
+- Select your newly created project as `A specific namespace`
+- Click `Subscribe`
+- Navigate `Installed Operators`
+
+image::codeready.png[image]
+
+- Click onto `Red Hat CodeReady Workspace`
+- Click `Create New`
+- Add the specific `postgresImage` under `database` as shown below
+
+```
+apiVersion: org.eclipse.che/v1
+kind: CheCluster
+metadata:
+  name: codeready
+  namespace: codyready-test
+spec:
+  server:
+    cheFlavor: codeready
+    tlsSupport: false
+    selfSignedCert: false
+  database:
+    externalDb: false
+    chePostgresHostName: ''
+    chePostgresPort: ''
+    chePostgresUser: ''
+    chePostgresPassword: ''
+    chePostgresDb: ''
+    postgresImage: 'registry.access.redhat.com/rhscl/postgresql-10-rhel7:1-35'
+  auth:
+    openShiftoAuth: false
+    externalKeycloak: false
+    keycloakURL: ''
+    keycloakRealm: ''
+    keycloakClientId: ''
+  storage:
+    pvcStrategy: per-workspace
+    pvcClaimSize: 1Gi
+    preCreateSubPaths: true
+
+```
+
+- Click `Create`
+- Navigate to `Workloads` -> `Pods`
+- You will see Pods as shown below are created
+
+image::codeready-pods.png[image]
+
+- Wait until all pods are `Running`
+- Navigate to `Networking` -> `Routes`
+- Click onto the URL under `LOCATION` for `codeready` route
+
+image::codereadyworkspace.png[image]
+
+- Click `Register`
+
+image::codeready-register.png[image]
+
+- Enter the following information:
+   * First name: Devday
+   * Last name: User01
+   * Email: any_email@devday.com
+   * Username: *Username*
+   * Password: openshift4
+
+IMPORTANT: Please replace *Username* with your username
+
+- Click `Register`
+- Will be prompt to create new workspace
+
+image::codeready-createws.png[image]
+
+- Enter `springboot-Username` as the name of the Workspace
+- Select `springboot` from the list of stacks
+
+image::codeready-git.png[image]
+
+- Click `Add or Import project` > Click `Git`
+- Enter URL as `https://github.com/che-samples/web-java-spring`
+- Click `Add`
+- Click `CREATE & OPEN`
+
+image::codeready-starting.png[image]
+
+image::codeready-ready.png[image]
+
+- Click `Project` from the top menu and select `Update Project Configuration`
+
+image::codeready-project.png[image]
+
+- Click `Maven`
+- Click `Save`
+
+image::codeready-run.png[image]
+
+- Click on the icon circle in red to go to manage command
+- Scroll down to `Apply to` session
+
+image::codeready-apple.png[image]
+
+- Change `Applicable` to `Yes` by click where the red circle is
+- Click `Save`
+- Scroll back up to the top
+
+image::codeready-build.png[image]
+
+- Click `RUN`
+- Click `+` nexto `RUN` menu on the left as show below -> double click onto `Maven`
+
+image::codeready-createrun.png[image]
+
+- Enter `Build and Run` as the name
+- Replace the line below in the `Command Line` area
+
+```
+cd ${current.project.path}
+mvn spring-boot:run
+
+```
+
+- Replace `${server.springboot}` in the `Preview URL` session
+- Click `Save`
+- Click `RUN` the green button
+
+image::codeready-createrun.png[image]
+
+- Click the preview URL in the terminal (indicates in the image)
+
+image::sprintboot-result.png[image]
+
+
+=== Create factory
+
+- Continue working on the workspace
+- Click `Workspace` --> `Create Factory`
+
+image::codeready-factory.png[image]
+
+- Enter 'SpringBootSample' as name
+- Click `Create` -> `Close`
+
+image::codeready-factory2.png[image]
+
+- Click `Workspace` -> 'Stop'
+
+image::codeready-factory3.png[image]
+
+- Click `Factory (1)` on the left menu
+- Click onto `SpringBootSample`
+- Scroll down and look for `Configure Actions`
+
+image::codeready-sample.png[image]
+
+- Add `Buid and Run` to `runCommand` -> Click `Add`
+- Click `Open`
+
+image::codeready-openfactory.png[image]
+
+- Click `Back to Dashboard` at the bottom
+
+image::codeready-fromfactory.png[image]
+
+- Click running workspace under `RECENT WORKSPACES` on the left menu
+- Wait for the workspace to come up
+- You will be able to start building and running the workspace
+
+image::codeready-buildandrun.png[image]
+
+
+
+Congratulations!! You now know how to deploy CodeReady and deploy an application.
