@@ -94,6 +94,16 @@ NOTE: If normal cut/paste does not work, you can try to use browser's edit menu 
 
 image::ocp4-web-terminal.png[image]
 
+=== To login to a remote server
+
+[source,shell]
+----
+$ oc login {{API_URL}}
+----
+
+NOTE: Username and password will be provided by your instructor.
+
+
 Congratulations!! You now know how to create a project, an application
 using an external docker image and navigate around. You also install OC CLI on
 the web terminal to access the cluster via CLI.
