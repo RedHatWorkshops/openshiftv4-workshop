@@ -128,6 +128,7 @@ image::codeready-project.png[image]
 image::codeready-run.png[image]
 
 - Click on the icon circle in red to go to manage command
+- In the manage command pane open the build command folder and click on the build file
 - Scroll down to `Apply to` session
 
 image::codeready-apply.png[image]
