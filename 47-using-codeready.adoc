@@ -14,7 +14,7 @@ to develop our apps.
 IMPORTANT: Please replace *Username* with your username
 
 - Create a new project `codeready-Username`
-- - As an Operator administrator, run this command before proceeding:
+- As an Operator administrator, run this command before proceeding:
 
 ```
 oc create clusterrole codeready-operator --resource=oauthclients --verb=get,create,delete,update,list,watch
@@ -36,7 +36,7 @@ image::codeready-subscription.png[image]
 - Click `Subscribe`
 - Navigate `Installed Operators`
 
-image::codeready.png[image]
+image::codeready-installed.png[image]
 
 - Click onto `Red Hat CodeReady Workspace`
 - Click `Create New`
@@ -130,7 +130,7 @@ image::codeready-run.png[image]
 - Click on the icon circle in red to go to manage command
 - Scroll down to `Apply to` session
 
-image::codeready-apple.png[image]
+image::codeready-apply.png[image]
 
 - Change `Applicable` to `Yes` by click where the red circle is
 - Click `Save`
@@ -160,7 +160,7 @@ image::codeready-createrun.png[image]
 
 - Click the preview URL in the terminal (indicates in the image)
 
-image::sprintboot-result.png[image]
+image::springboot-result.png[image]
 
 
 === Create factory
@@ -192,7 +192,7 @@ image::codeready-openfactory.png[image]
 
 - Click `Back to Dashboard` at the bottom
 
-image::codeready-fromfactory.png[image]
+image::codereay-fromfactory.png[image]
 
 - Click running workspace under `RECENT WORKSPACES` on the left menu
 - Wait for the workspace to come up
