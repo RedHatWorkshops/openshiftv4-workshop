@@ -43,7 +43,7 @@ modules:
       name: Create a Pipeline
     46-using-operatorhub:
       name: Extensions to OpenShift using OperatorHub
-    47-using-codeready:
-      name: CodeReady Workspace
     43-exploring-the-cluster:
       name: Exploring the Cluster
+    47-using-codeready:
+      name: CodeReady Workspace

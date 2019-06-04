@@ -110,7 +110,7 @@ image::codeready-createws.png[image]
 image::codeready-git.png[image]
 
 - Click `Add or Import project` > Click `Git`
-- Enter URL as `https://github.com/che-samples/web-java-spring`
+- Enter URL as `https://github.com/che-samples/web-java-spring-boot`
 - Click `Add`
 - Click `CREATE & OPEN`
 
