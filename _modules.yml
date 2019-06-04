@@ -45,5 +45,3 @@ modules:
       name: Extensions to OpenShift using OperatorHub
     43-exploring-the-cluster:
       name: Exploring the Cluster
-    47-using-codeready:
-      name: CodeReady Workspace

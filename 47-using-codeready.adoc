@@ -128,7 +128,7 @@ image::codeready-project.png[image]
 image::codeready-run.png[image]
 
 - Click on the icon circle in red to go to manage command
-- In the manage command pane open the build command folder and click on the build file
+- In the manage command pane open the build command folder and double click on the build file
 - Scroll down to `Apply to` session
 
 image::codeready-apply.png[image]
@@ -140,7 +140,7 @@ image::codeready-apply.png[image]
 image::codeready-build.png[image]
 
 - Click `RUN`
-- Click `+` nexto `RUN` menu on the left as show below -> double click onto `Maven`
+- Click `+` next to `RUN` menu on the left as show below -> double click onto `Maven`
 
 image::codeready-createrun.png[image]
 
@@ -153,11 +153,15 @@ mvn spring-boot:run
 
 ```
 
-- Replace `${server.springboot}` in the `Preview URL` session
+- Scroll down and replace `${server.springboot}` in the `Preview URL` session
 - Click `Save`
-- Click `RUN` the green button
+- Scroll back up and click `RUN` the green button
 
 image::codeready-createrun.png[image]
+
+image::springboot-result.png[image]
+
+image::codeready-preview.png[image]
 
 - Click the preview URL in the terminal (indicates in the image)
 
