@@ -22,7 +22,7 @@ For more information about SCL, see:
 
 - https://access.redhat.com/documentation/en-us/red_hat_software_collections/3/
 
-=== Getting a Red Hat Developer's Acccout
+=== Getting a Red Hat Developer's Account
 
 - You need a Red Hat Developer's account to grab the service account user name and
 token to download the UBI base images. It is free. :-) You can also use the

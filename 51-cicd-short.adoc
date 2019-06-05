@@ -44,10 +44,10 @@ Login successful.
 
 - Make sure you switch project to your `pipeline-Username` project
 
-```
+[source,shell]
+----
 [~]$ oc project pipline-user01
-
-```
+----
 
 - Let's lookup the jenkins template from the terminal and execute the following
 
@@ -116,11 +116,12 @@ image::jenkins.png[image]
 
 - Create pipeline via web terminal
 
-```
+[source,shell]
+----
 [~]$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
 
 buildconfig.build.openshift.io/nodejs-sample-pipeline created
-```
+----
 
 - Grant permissions to jenkins sevice account for access to the project.
 
