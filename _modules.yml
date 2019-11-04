@@ -23,8 +23,8 @@ config:
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
 
 modules:
-  01-verify-connectivity:
-    name: Verify Connectivity
+  0-setting-up-client-tools:
+    name: Set up on your Local environment
   01-verify-connectivity:
     name: Verify Connectivity
   02-create-app-from-container-image:

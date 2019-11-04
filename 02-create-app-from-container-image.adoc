@@ -12,80 +12,73 @@ IMPORTANT: Please replace *Username* with your username
 
 - login to web UI via {{CONSOLE_ADDRESS}}
 - Use the same username and password that assigned to you
-- On the left-hand side menu, select `Home` and then select `Project`
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
 - Click `Create Project`
+
+image::dev-project.png[image]
+
 - Enter *web-terminal-Username* as name of the project. The display name and description is optional.
 
 image::create-project.png[image]
 
-- Click `Create`
 
 === Deploy an Image
 
-- Click `Deploy Image`, or in the top-right click the *Add* drop-down menu, then select `Deploy Image`
+- Click `+Add` on the left menu
+- Click onto `Container Image` to deploy an image
+
+image::container-image.png[image]
+
 - Enter `quay.io/openshiftlabs/workshop-terminal:2.4.0` in the `Image Name` box,
   noting that there's no `http://`, enter exactly as shown here,
   without the quotes
 - Select the magnifying glass icon to the right of the box
 - Use the default `Name` for the deployment
-- Scroll down a bit and provide an environment variable.
-- Add `OC_VERSION` and `4.1` as `Environment Variable` section at the bottom on the page.
+
+image::image01.png[image]
+
+- Click onto `Deployment Configuration` link at the bottom of the page
+- Add `OC_VERSION` and `4.2` as `Environment Variable` in the `Deployment Configuration` section
 
 image::ocp4-deploy-image.png[image]
 
-- Click `Deploy`
-- On the left-hand side menu, select `Workload` --> `Deployments Configs`
-- Click onto the `workshop-terminal` to see the deployment details here
+- Click `Create`
+- You will be on the Topology view
 
 image::ocp4-dc.png[image]
 
-- click the tab `Pods` to watch the deployment to complete
+- click onto the middle of the icon, the details page shows on the right
 
 image::ocp4-terminal.png[image]
 
-- Navigate to `Home` --> `Events` to check status on each events.
+- Click `DC workshop-terminal`
+- Click `Events` tab
 
 Events in OpenShift Container Platform are modeled based on events that happen
 to API objects in an OpenShift Container Platform cluster. Events allow OpenShift
 Container Platform to record information about real-world events in a resource-
 agnostic manner. For more information, please see
-https://docs.openshift.com/container-platform/3.11/security/monitoring.html#security-monitoring-events.
+https://docs.openshift.com/container-platform/4.2/nodes/clusters/nodes-containers-events.html
 
-== Create route
+== Accessing to the Terminal
 
-Next we need to create a route so we can access this application from the outside of OpenShift (i.e. from the internet).
+Next we need to learn how to get to the route of the image, so we can access this application from the outside of OpenShift (i.e. from the internet).
 
-- Navigate to `Networking` --> `Routes`
-- Click `Create Route` in the top-left
-- Enter `workshop-terminal` for the name of the route, leave the hostname and path the default
-- Select `workshop-terminal` from the list of services in the `Service` menu
-- Select the only port in the `Target Port` drop down (should be port 10080 --> 10080), like this:
+- Navigate to `Topology` on the left
+- Click on the icon where is shown with the bubble
 
-image::ocp4-route.png[image]
+image::route-link.png[image]
 
-- Click `Create` at the bottom and it will create the route.
-- You will now be presented with a pane that shows the overview of the route:
+- the terminal will be opened on a separated browser tab
 
-image::ocp4-route-details.png[image]
+=== Setting up OC CLI on the terminal
 
-
-=== Accessing the terminal
-
-- In the top right hand side of the route details page, you will see the `LOCATION`
-which will be the routable URL that will provide access to our workshop terminal.
-- Click on the link under `LOCATION` and you will see the in-browser terminal
-session that we can use (if preferred, or mandated due to connectivity issues):
-
-image::run-oc-terminal.png[image]
-
-
-=== Setup OC CLI in web terminal
-
-- Execute the following in the terminal:
+- Execute the following in the terminal from the route link:
 
 ....
-$ wget {{LINUX_CLI_URL}}
-$ tar zvxf openshift-client-linux-4.1.0.tar.gz
+$ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{VERSION}}/openshift-client-linux-{{VERSION}}.tar.gz
+$ tar zvxf openshift-client-linux-{{VERSION}}.tar.gz
 $ mv oc /opt/app-root/bin/
 $ oc version
 ....
