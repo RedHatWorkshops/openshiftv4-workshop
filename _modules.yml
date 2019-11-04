@@ -31,6 +31,10 @@ modules:
     name: Create an App using Container image
   03-deploy-java-app:
     name: Deploy a Java Application
+  04-deploy-dotnet-app:
+    name: Deploy a .Net core Application
+  05-adding-database-to-springboot-app:
+    name: Configmap vs Env variables
   06-cicd-short:
     name: Create a Pipeline
   07-using-codeready:
