@@ -22,6 +22,7 @@ image::create-project.png[image]
 
 === Developer Persona
 
+- Click `+Add` on the left menu
 - Click onto `From Catalog`
 
 image::from-catalog.png[image]
