@@ -21,4 +21,8 @@ image::ocp4-home.png[image]
 
 NOTE: If you login as regular user, you will not see any project when logging in the first time.
 
+- Click `Developer` under the drop down from `Administrator`
+
+image::dev-home.png[image]
+
 Congratulations!! You now ready for more fun work!
