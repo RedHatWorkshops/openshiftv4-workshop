@@ -11,17 +11,20 @@ deployments on OpenShift.
 
 === Create a new project
 
-IMPORTANT: Please replace *Username* with your username. It should be all lowercase and no spaces.
+=== Create Project
+IMPORTANT: Please replace *Username* with your username
 
 - login to web UI via {{CONSOLE_ADDRESS}}
 - Use the same username and password that assigned to you
-- On the left-hand side menu, select `Home` and then select `Project`
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
 - Click `Create Project`
-- Enter *pipeline-Username* as `Name` of the project. The display name and description is optional.
+
+image::dev-project.png[image]
+
+- Enter *pipeline-Username* as name of the project. The display name and description is optional.
 
 image::create-project.png[image]
-
-- Click `Create`
 
 - Alternatively, you can run this command below via CLI.
 
@@ -36,69 +39,34 @@ You can bypass the certificate check, but any data you send to the server could 
 by others.
 Use insecure connections? (y/n): y
 
-Authentication required for https://api.cluster-d724.sandbox182.opentlc.com:6443 (openshift)
-Username: admin01
+Authentication required for {{API_URL}} (openshift)
+Username: user1
 Password:
 Login successful.
 ```
 
-- Make sure you switch project to your `pipeline-Username` project
+== Deploy OOTB Jenkins
 
-[source,shell]
-----
-[~]$ oc project pipline-user01
-----
+- Navigate to `+Add`
+- Click on `From Catalog`
 
-- Let's lookup the jenkins template from the terminal and execute the following
+image::from-catalog.png[image]
 
-```
-[~]$ oc get templates -n openshift | grep jenkins
-jenkins-ephemeral                               Jenkins service, without persistent storage....
-         7 (all set)       6
-jenkins-persistent                              Jenkins service, with persistent storage....
-         9 (all set)       7
-```
+- Check the `checkbox` next to `Template`
+- Enter `Jenkins` in the `Filter by keyword`
 
-- Getting Jenkins up and Running
+image::pick-templates.png[image]
 
-```
-[~]$ oc new-app jenkins-ephemeral
- -> Deploying template "openshift/jenkins-ephemeral" to project testme2
+- Click `Jenkins (Ephemeral)`
+- Click `Instantiate Template`
+- Take the default values and click `Create`
+- Navigate to `Topology`
+- Click onto the middle of the Jenkins icon to see the details
+- Wait for the solid blue ring shows on the icon
+- Click onto the route link to go to Jenkins Console
 
-     Jenkins (Ephemeral)
-     ---------
-     Jenkins service, without persistent storage.
+image::route-link.png[image]
 
-     WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.
-
-     A Jenkins service has been created in your project.  Log into Jenkins with your OpenShift account.
-     The tutorial at https://github.com/openshift/origin/blob/master/examples/jenkins/README.md contains
-     more information about using this template.
-
-     * With parameters:
-        * Jenkins Service Name=jenkins
-        * Jenkins JNLP Service Name=jenkins-jnlp
-        * Enable OAuth in Jenkins=true
-        * Memory Limit=1Gi
-        * Jenkins ImageStream Namespace=openshift
-        * Disable memory intensive administrative monitors=false
-        * Jenkins ImageStreamTag=jenkins:2
-
- -> Creating resources ...
-    route.route.openshift.io "jenkins" created
-    deploymentconfig.apps.openshift.io "jenkins" created
-    serviceaccount "jenkins" created
-    rolebinding.authorization.openshift.io "jenkins_edit" created
-    service "jenkins-jnlp" created
-    service "jenkins" created
- -> Success
-    Access your application via route 'jenkins-testme2.apps.cluster-4c7b.sandbox575.opentlc.com'
-    Run 'oc status' to view your app.
-```
-
-- Back to web console {{CONSOLE_ADDRESS}}
-- Navigate to `Networking` --> `Routes`
-- Click the link under `LOCATION`
 - Click `Advanced`
 - Click the link where `Proceed to jenkins-...`
 - Click `Log in with OpenShift`
@@ -118,6 +86,8 @@ image::jenkins.png[image]
 
 [source,shell]
 ----
+
+[~]$ oc project pipeline-userx
 [~]$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
 
 buildconfig.build.openshift.io/nodejs-sample-pipeline created
@@ -126,10 +96,10 @@ buildconfig.build.openshift.io/nodejs-sample-pipeline created
 - Grant permissions to jenkins sevice account for access to the project.
 
 ```
-[~] $ oc adm policy add-role-to-user admin system:serviceaccount:pipeline-Username:jenkins -n pipeline-Username
+[~] $ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:pipeline-Username:jenkins -n pipeline-Username
 clusterrole.rbac.authorization.k8s.io/admin added: "system:serviceaccount:pipeline-Username:jenkins"
 ```
-
+NOTE:
 NOTE: *pipeline-Username* will be replaced to your project name
 
 - Go back to your web console {{CONSOLE_ADDRESS}}
