@@ -9,32 +9,47 @@ In this exercise we will deploy a Java application
 IMPORTANT: Please replace *Username* with your username
 
 - login to web UI via {{CONSOLE_ADDRESS}}
-- Click `htpasswd`
 - Use the same username and password that assigned to you
-- On the left-hand side menu, select `Home` and then select `Project`
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
 - Click `Create Project`
+
+image::dev-project.png[image]
+
 - Enter *pets-Username* as name of the project. The display name and description is optional.
 
 image::create-project.png[image]
 
-- Click `Create`
+=== Developer Persona
 
-=== Developer Catalog
+- Click `+Add` on the left menu
+- Click onto `From Catalog`
 
-- Navigate to `Catalog` --> `Developer Catalog`
-- Click onto `Red Hat OpenJDK 8`
+image::from-catalog.png[image]
+
+- Enter `OpenJDK` in the `Filter by keyword`
+- Click `OpenJDK`
 
 image::openjdk.png[image]
 
-- Click `Create Application`
-- Enter the following
+- Click `Instantiate Template`
+- Enter the following:
+
   * Name: petclinic
-  * Git repository: https://github.com/spring-projects/spring-petclinic.git
-  * check `Create route`
+  * Git Repository URL: https://github.com/spring-projects/spring-petclinic.git
+  * Context Directory: [leave it as empty]
 
 image::deploy-java.png[image]
 
 - Click `Create`
+- Navigate to `Builds`
+- Click onto the buildconfig `petclinic`
+- Click 'Builds' tab
+- Click 'petclinic-1'
+- Click `Logs` to view the build logs
+
+
+
 - Navigate `Builds` --> `Builds`
 - Click `petclinic-1`
 - Click `Logs`
@@ -53,9 +68,12 @@ Storing signatures
 Successfully pushed //image-registry.openshift-image-registry.svc:5000/testme2/petclinic:latest@sha256:49a1758bfc58cd4815a705575fc6e0cf271c264ae8327018e8a03412e44cc9c1
 Push successful
 ```
-- Navigate to `Networking` --> `Routes`
-- Click on to `petclinic`
-- Click the link under `LOCATION`
+- Navigate to `Topology`
+- Click onto route link from the petinic icon
+
+image::route-link.png[image]
+
+- Application is shown as this
 
 image::javaapp.png[image]
 

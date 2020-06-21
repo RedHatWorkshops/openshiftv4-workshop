@@ -1,0 +1,102 @@
+[[create-an-app-from-a-container-image]]
+= Create an App from a Container image
+
+== Create an App from a Container image
+
+In this lab you will learn how to create a new project on OpenShift and
+how to create an application from an existing docker image using Web UI.
+
+=== Add a new project
+
+IMPORTANT: Please replace *Username* with your username
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
+- Click `Create Project`
+
+image::dev-project.png[image]
+
+- Enter *web-terminal-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+
+=== Deploy an Image
+
+- Click `+Add` on the left menu
+- Click onto `Container Image` to deploy an image
+
+image::container-image.png[image]
+
+- Enter `quay.io/openshiftlabs/workshop-terminal:2.4.0` in the `Image Name` box,
+  noting that there's no `http://`, enter exactly as shown here,
+  without the quotes
+- Select the magnifying glass icon to the right of the box
+- Use the default `Name` for the deployment
+
+image::image01.png[image]
+
+- Click onto `Deployment Configuration` link at the bottom of the page
+- Add `OC_VERSION` and `4.2` as `Environment Variable` in the `Deployment Configuration` section
+
+image::ocp4-deploy-image.png[image]
+
+- Click `Create`
+- You will be on the Topology view
+
+image::ocp4-dc.png[image]
+
+- click onto the middle of the icon, the details page shows on the right
+
+image::ocp4-terminal.png[image]
+
+- Click `DC workshop-terminal`
+- Click `Events` tab
+
+Events in OpenShift Container Platform are modeled based on events that happen
+to API objects in an OpenShift Container Platform cluster. Events allow OpenShift
+Container Platform to record information about real-world events in a resource-
+agnostic manner. For more information, please see
+https://docs.openshift.com/container-platform/4.2/nodes/clusters/nodes-containers-events.html
+
+== Accessing to the Terminal
+
+Next we need to learn how to get to the route of the image, so we can access this application from the outside of OpenShift (i.e. from the internet).
+
+- Navigate to `Topology` on the left
+- Click on the icon where is shown with the bubble
+
+image::route-link.png[image]
+
+- the terminal will be opened on a separated browser tab
+
+=== Setting up OC CLI on the terminal
+
+- Execute the following in the terminal from the route link:
+
+....
+$ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{VERSION}}/openshift-client-linux-{{VERSION}}.tar.gz
+$ tar zvxf openshift-client-linux-{{VERSION}}.tar.gz
+$ mv oc /opt/app-root/bin/
+$ oc version
+....
+
+NOTE: If normal cut/paste does not work, you can try to use browser's edit menu for cut/paste.
+
+image::ocp4-web-terminal.png[image]
+
+=== To login to a remote server
+
+[source,shell]
+----
+$ oc login {{API_URL}}
+----
+
+NOTE: Username and password will be provided by your instructor.
+
+
+Congratulations!! You now know how to create a project, an application
+using an external docker image and navigate around. You also install OC CLI on
+the web terminal to access the cluster via CLI.

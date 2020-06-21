@@ -2,26 +2,40 @@ config:
   vars:
     - name: DEFAULT_PASSWORD
       desc: Default password for users in the environment
-      value: openshift
+      value: openshift4
+    - name: VERSION
+      desc: Version is used
+      value: 4.2.2
     - name: CONSOLE_ADDRESS
       desc: HTTP address of the OpenShift console
-      value: https://console-openshift-console.apps.cluster-farmers-b621.farmers-b621.open.redhat.com
+      value: https://console-openshift-console.apps.cluster-8f8a.sandbox1118.opentlc.com/
     - name: APPS_ADDRESS
       desc: HTTP address suffix of apps deployed on OpenShift
-      value: apps.cluster-farmers-b621.farmers-b621.open.redhat.com
+      value: apps.cluster-8f8a.sandbox1118.opentlc.com/
     - name: GET_STARTED_CLI_URL
       desc: URL to documentation to configure CLI
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
     - name: API_URL
       desc: URL to API server
-      value: https://api.cluster-farmers-b621.farmers-b621.open.redhat.com:6443
-    - name: NEXUS_URL
-      desc: URL to Nexus repository
-      value: http://nexus-workshop.apps.cluster-farmers-b621.farmers-b621.open.redhat.com/repository/maven-public/
+      value: https://api.cluster-8f8a.sandbox1118.opentlc.com:6443
     - name: REDHAT_DOWNLOAD_OC_PORTAL_URL
       desc: URL for Red Hat portal oc binary download
       value: https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/
 
 modules:
-  51-cicd-short:
+  0-setting-up-client-tools:
+    name: Set up on your Local environment
+  01-verify-connectivity:
+    name: Verify Connectivity
+  02-create-app-from-container-image:
+    name: Create an App using Container image
+  03-deploy-java-app:
+    name: Deploy a Java Application
+  04-deploy-dotnet-app:
+    name: Deploy a .Net core Application
+  05-adding-database-to-springboot-app:
+    name: Configmap vs Env variables
+  06-cicd-short:
     name: Create a Pipeline
+  07-using-codeready:
+    name: CodeReady Workspace

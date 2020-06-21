@@ -1,0 +1,68 @@
+[[deploy-a-dotnet-application]]
+== Deploy a .Net Application
+
+In this exercise we will learn how to create a .Net application using source
+code and the .Net builder image.
+
+=== Create Project
+IMPORTANT: Please replace *Username* with your username
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
+- Click `Create Project`
+
+image::dev-project.png[image]
+
+- Enter *mydotnetapp-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+=== Developer Persona
+
+- Click `+Add` on the left menu
+- Click onto `From Catalog`
+
+image::from-catalog.png[image]
+
+- Enter `.Net` in the `Filter by keyword`
+- Click `.Net Core`
+- Click `Create Application`
+- Click `Try Sample` under Git Repo URL
+- Click `Create`
+
+image::dotnetapp.png[image]
+
+- From `Topology`, you see
+
+image::dotnet.png[image]
+
+- Click on the build icon to see the build log
+
+image::buildicon.png[image]
+
+
+```
+Pushing image image-registry.openshift-image-registry.svc:5000/dotnetapp-userx/dotnet:latest ...
+Getting image source signatures
+Copying blob sha256:935cd9c34d12519df5ccae52d0e4203b783248b58f30aee1519363fda3893162
+Copying blob sha256:1568bf6457e51068ac639e8d01c5088822c5c3d599a6eee92e1c149ddaa4f95d
+Copying blob sha256:ad8abb32d48927656a09dcffec1d9c321498e63594fc5f93e4e7dee7f1a59e00
+Copying blob sha256:90942a68b98948a176a7b51d60ee487e9d5b9db3f9424dceb41a66450d1b4fab
+Copying blob sha256:7585ac2ccc88be34436e1572c0dab8e18a311e6ab3018c39e16c1c845033dcc9
+Copying config sha256:65b8d2cf91991eddfa8a8f72400ee30d1d6f4d73cfeb88f7df6c549152c03e2e
+Writing manifest to image destination
+Storing signatures
+Successfully pushed image-registry.openshift-image-registry.svc:5000/dotnetapp-userx/dotnet@sha256:20d330a3f5af4d3b2659ee6529d43c9157f0f8ba50257f66fcff0882893dffbc
+Push successful
+```
+
+- Navigate back to `Topology`
+- Click on to route link from the icon
+
+image::dotnet-complete.png[image]
+
+- You now see they .Net core application on OpenShift!
+
+image::sample-dotnet.png[image]

@@ -1,1 +1,1 @@
-# openshiftv4-workshop
+# openshiftv4.2-workshop

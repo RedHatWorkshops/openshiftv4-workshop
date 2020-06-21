@@ -1,0 +1,133 @@
+[[creating-a-pipeline]]
+= Creating a Pipeline
+
+== Creating a Pipeline
+
+In this lab, we will learn to create a build pipeline on OpenShift. This
+pipeline will be setup using Jenkins running as an application pod on
+OpenShift. The pipeline running on Jenkins will trigger builds and
+deployments on OpenShift.
+
+
+=== Create a new project
+
+=== Create Project
+IMPORTANT: Please replace *Username* with your username
+
+- login to web UI via {{CONSOLE_ADDRESS}}
+- Use the same username and password that assigned to you
+- Click `Developer` under `Administrator` to switch to Developer persona
+- Click onto `Project` on the top
+- Click `Create Project`
+
+image::dev-project.png[image]
+
+- Enter *pipeline-Username* as name of the project. The display name and description is optional.
+
+image::create-project.png[image]
+
+- Alternatively, you can run this command below via CLI.
+
+=== Deploy your CI/CD tool (Jenkins)
+
+- Login to the cluster via {{API_URL}}
+
+```
+[~]$ oc login {{API_URL}}
+The server uses a certificate signed by an unknown authority.
+You can bypass the certificate check, but any data you send to the server could be intercepted
+by others.
+Use insecure connections? (y/n): y
+
+Authentication required for {{API_URL}} (openshift)
+Username: user1
+Password:
+Login successful.
+```
+
+== Deploy OOTB Jenkins
+
+- Navigate to `+Add`
+- Click on `From Catalog`
+
+image::from-catalog.png[image]
+
+- Check the `checkbox` next to `Template`
+- Enter `Jenkins` in the `Filter by keyword`
+
+image::pick-templates.png[image]
+
+- Click `Jenkins (Ephemeral)`
+- Click `Instantiate Template`
+- Take the default values and click `Create`
+- Navigate to `Topology`
+- Click onto the middle of the Jenkins icon to see the details
+- Wait for the solid blue ring shows on the icon
+- Click onto the route link to go to Jenkins Console
+
+image::route-link.png[image]
+
+- Click `Advanced`
+- Click the link where `Proceed to jenkins-...`
+- Click `Log in with OpenShift`
+
+image::jenkins-login.png[image]
+
+- Click `htpasswd`
+- Login using your user name
+- Click `Allow selected permissions`
+- You now login the Jenkins console
+
+image::jenkins.png[image]
+
+=== Pipeline setup
+
+- Create pipeline via web terminal
+
+[source,shell]
+----
+
+[~]$ oc project pipeline-userx
+[~]$ oc create -f https://raw.githubusercontent.com/openshift/origin/master/examples/jenkins/pipeline/nodejs-sample-pipeline.yaml
+
+buildconfig.build.openshift.io/nodejs-sample-pipeline created
+----
+
+- Grant permissions to jenkins sevice account for access to the project.
+
+```
+[~] $ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:pipeline-Username:jenkins -n pipeline-Username
+clusterrole.rbac.authorization.k8s.io/admin added: "system:serviceaccount:pipeline-Username:jenkins"
+```
+NOTE:
+NOTE: *pipeline-Username* will be replaced to your project name
+
+- Go back to your web console {{CONSOLE_ADDRESS}}
+- Navigate to `Build` --> `Build Configs`
+- Click onto `nodejs-sample-pipeline`
+- Click `Actions` dropdown on the top right
+- Select `Start Build`
+- Build starts as show below
+
+image::jenkins-viewlog.png[image]
+
+- Click `View Logs`
+- Click `Open Blue Ocean` from the Jenkins Console
+
+image::jenkins-build.png[image]
+
+- Blue Ocean console here (may take a minute to show up):
+
+image::blue-ocean.png[image]
+
+- Go back to OpenShift web console
+
+image::pipeline-build.png[image]
+
+- When Pipleline build is completed, navigate `Network` --> `Route`
+- Click onto the link under `LOCATION` for `nodejs-mongodb-example`
+
+image::pipeline-result.png[image]
+
+Congratulations!! In this lab, you have learnt how to set up and run
+your own CI/CD pipeline on OpenShift.
