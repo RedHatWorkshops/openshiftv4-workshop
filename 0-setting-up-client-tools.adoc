@@ -70,3 +70,8 @@ $ oc login {{API_URL}}
 ----
 
 NOTE: Username and password will be provided by your instructor.
+hsjhdasjkdasd
+askd
+askdas
+das
+das
